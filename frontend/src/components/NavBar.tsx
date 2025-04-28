@@ -42,11 +42,11 @@ const NavBar = () => {
 
         {/* Section for tabs */}
         <AbsoluteCenter axis={"horizontal"}>
-          <Tabs.Root key={"enclosed"} defaultValue="plans" variant={"enclosed"}>
+          <Tabs.Root key={"enclosed"} defaultValue="exercises" variant={"enclosed"}>
             <Tabs.List>
               <Tabs.Trigger value="exercises" asChild>
                 <ChakraLink unstyled asChild variant={"plain"}>
-                  <ReactRouterLink to="/" className='tabs'><FaDumbbell />Exercises</ReactRouterLink>
+                  <ReactRouterLink to="/exercises" className='tabs'><FaDumbbell />Exercises</ReactRouterLink>
                 </ChakraLink>
               </Tabs.Trigger>
               <Tabs.Trigger value="workouts" asChild>
