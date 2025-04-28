@@ -1,0 +1,4 @@
+.tabs:focus {
+    outline: none;
+    text-decoration: none;
+}
