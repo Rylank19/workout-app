@@ -1,5 +1,6 @@
-import { Button, Card, Image } from '@chakra-ui/react'
-import React from 'react'
+import { Button, Card, IconButton, Image } from '@chakra-ui/react'
+import { FaEdit } from "react-icons/fa";
+import { AiTwotoneDelete } from "react-icons/ai";
 
 const ExerciseCard = ({exercise} : {exercise : string}) => {
   
@@ -12,9 +13,9 @@ const ExerciseCard = ({exercise} : {exercise : string}) => {
           Good exercise for back, arms, and legs
         </Card.Description>
       </Card.Body>
-      <Card.Footer>
-        <Button variant="solid">Update Exercise</Button>
-        <Button variant="solid">Delete Exercise</Button>
+      <Card.Footer justifyContent={"flex-end"}>
+        <IconButton colorPalette={"blue"}><FaEdit /></IconButton>
+        <IconButton colorPalette={"red"}><AiTwotoneDelete /></IconButton>
       </Card.Footer>
     </Card.Root>
   )
