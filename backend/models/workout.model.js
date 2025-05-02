@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const {Schema, SchemaTypes, model} = mongoose;
 
-const workoutSchema = new Schema({
+export const workoutSchema = new Schema({
     name: {
         type: String,
         required: true,

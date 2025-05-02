@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const {Schema, SchemaTypes, model} = mongoose;
 
-const planSchema = new Schema({
+export const planSchema = new Schema({
     name: {
         type: String,
         required: true,

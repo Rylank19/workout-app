@@ -1,8 +1,8 @@
 import mongoose, { SchemaTypes } from "mongoose";
 const {Schema, model} = mongoose;
-import {exerciseSchema} from './exercise.model';
-import {workoutSchema} from './workout.model';
-import {planSchema} from './plan.model';
+import {exerciseSchema} from './exercise.model.js';
+import {workoutSchema} from './workout.model.js';
+import {planSchema} from './plan.model.js';
 
 const userSchema = new Schema({
     name: {
