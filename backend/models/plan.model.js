@@ -2,11 +2,6 @@ import mongoose from "mongoose";
 const {Schema, SchemaTypes, model} = mongoose;
 
 const planSchema = new Schema({
-    userId: {
-        type: SchemaTypes.ObjectId,
-        ref: 'User',
-        required: true,
-    },
     name: {
         type: String,
         required: true,

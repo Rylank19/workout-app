@@ -1,7 +1,12 @@
 import mongoose from "mongoose";
 const {Schema, SchemaTypes, model} = mongoose;
 
-const workoutSchema = new Schema({
+const historySchema = new Schema({
+    userId: {
+        type: SchemaTypes.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     name: {
         type: String,
         required: true,
@@ -21,9 +26,13 @@ const workoutSchema = new Schema({
                 type: Number,
                 required: true,
             }
-        }], // number of sets is length and reps are specified
+        }]
     }],
+    date: {
+        type: Date,
+        required: true,
+    },
 });
 
-const Workout = model('Workout', workoutSchema);
-export default Workout;
+const History = model('History', historySchema);
+export default History;
