@@ -1,5 +1,5 @@
 import express from "express";
-import { createExercise, deleteExercise } from "../controllers/exercise.controller.js"
+import { createExercise, deleteExercise, getExercises } from "../controllers/exercise.controller.js"
 
 const router = express.Router();
 
@@ -8,5 +8,7 @@ const router = express.Router();
 router.post("/", createExercise);
 
 router.delete("/:id", deleteExercise);
+
+router.post("/user-exercises", getExercises)
 
 export default router;

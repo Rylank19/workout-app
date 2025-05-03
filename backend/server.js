@@ -8,8 +8,8 @@ const PORT = 5000;
 
 app.use(express.json());
 
-app.use("/", userRoutes)
-app.use("/exercise", exerciseRoutes)
+app.use("/api/user", userRoutes)
+app.use("/api/exercises", exerciseRoutes)
 
 app.listen(PORT, () => {
     connectDB();

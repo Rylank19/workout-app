@@ -2,8 +2,25 @@ import Exercise from '../models/exercise.model.js';
 import mongoose from "mongoose";
 import User from '../models/user.model.js';
 
+export const getExercises = async (req, res) => {
+    const {userID} = req.body; // user will send this data
+
+    if (!userID) {
+        return res.status(400).json({ success:false, message:"Please provide all fields"});
+    }
+
+    try {
+        const user = await User.findById(userID);
+        return res.status(200).json({success: true, data: user.custom_exercises});
+    } catch (error) {
+        console.log("error in fetching user:", error.message);
+        res.status(500).json({success: false, message:"Server Error"});
+    }
+};
+
 export const createExercise = async (req, res) => {
     const exercise = req.body; // user will send this data
+    console.log(exercise)
 
     if (!exercise.userID || !exercise.name || !exercise.muscleGroup) {
         return res.status(400).json({ success:false, message:"Please provide all fields"});
@@ -14,12 +31,12 @@ export const createExercise = async (req, res) => {
     }
 
     try {
-        const user = await User.findByIdAndUpdate(exercise.userID)
+        const user = await User.findById(exercise.userID)
         console.log("Found user")
         console.log(user)
         user.custom_exercises.push({name: exercise.name, muscleGroup: exercise.muscleGroup});
         await user.save();
-        res.status(201).json({success: true, data:user.custom_exercises[0]});
+        res.status(201).json({success: true, data:user.custom_exercises[user.custom_exercises.length - 1]});
     } catch (error) {
         console.error("Error in create exercise:", error.message);
         res.status(500).json({success: false, message: "Server Error"});
