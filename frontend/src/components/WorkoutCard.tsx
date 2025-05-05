@@ -5,10 +5,10 @@ import { Button, ButtonGroup, Card, Center, CheckboxGroup, CloseButton, Dialog, 
 import { AiTwotoneDelete } from 'react-icons/ai';
 import MiniExerciseCard from './ExerciseMiniCard.tsx';
 import { Exercise } from '@/store/exercise.ts';
-import { useState } from 'react';
+import { dialog } from '@/components/WorkoutDialog.tsx'
+import { useEffect, useRef, useState } from 'react';
 
 const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exercise[]}) => {
-  const selected_exercises = workout.exercises.map(exercise => exercise.exerciseId);
   const {userID} = useUserStore();
   const handleDeleteWorkout = async (uid: string, wid : string) => {
     // const {success, message} = await deleteWorkout(uid, eid);
@@ -35,17 +35,71 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
       })
     }
   }
+  const [step, setStep] = useState(0)
 
-  const handleStep = (step_val) => {
-    if (step_val < 0)
-      setStep(0)
-    else if (step_val > 3)
+  const incrementStep = () => {
+    if (step + 1 > 3)
       setStep(3)
     else
-      setStep(step_val)
+      setStep(step + 1)
   }
 
-  const [step, setStep] = useState(0)
+  const decrementStep = () => {
+    if (step - 1 < 0)
+      setStep(0)
+    else
+      setStep(step - 1)
+  }
+
+  const resetStep = () => {
+    setStep(0)
+  }
+
+  const dialogOpen = useRef(false)
+  const [selectedExercises, setSelectedExercises] = useState<string[]>(workout.exercises.map(exercise => exercise.exerciseId));
+
+  // this was my approach to getting the dialog to update when the step state was changed
+  useEffect(() => {
+    if (dialogOpen.current) {
+      console.log(selectedExercises)
+      if (step !== 1) {
+        dialog.update("a", {
+          title: "Workout Creation",
+          content: (
+            <CheckboxGroup defaultValue={selectedExercises}>
+              <SimpleGrid gap={4}>
+                {exercises.map((exercise) => {
+                  return <MiniExerciseCard key={exercise._id} exercise={exercise}/>
+                })}
+              </SimpleGrid>
+            </CheckboxGroup>
+          ),
+          step: step,
+          incrementStep: incrementStep,
+          decrementStep: decrementStep,
+          resetStep: resetStep, // I should make an object for the dialog props so that I am not retyping these every time
+        })
+      }
+      else if (step === 1) {
+        dialog.update("a", {
+          title: "Workout Creation",
+          content: (
+            <CheckboxGroup value={selectedExercises} onValueChange={setSelectedExercises}>
+              <SimpleGrid gap={4}>
+                {exercises.map((exercise) => {
+                  return <MiniExerciseCard key={exercise._id} exercise={exercise}/>
+                })}
+              </SimpleGrid>
+            </CheckboxGroup>
+          ),
+          step: step,
+          incrementStep: incrementStep,
+          decrementStep: decrementStep,
+          resetStep: resetStep, // I should make an object for the dialog props so that I am not retyping these every time
+        })
+      }
+    }
+  }, [selectedExercises, step, exercises, incrementStep, decrementStep])
 
   return (
     <Card.Root variant={'elevated'} overflow={"hidden"} key={workout._id} flexDirection={"row"} width={"2xl"}>
@@ -57,75 +111,28 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
           Reps: {workout.name} Weights: 100 200 300
         </Card.Description>
       </Card.Body>
-      <Dialog.Root>
-        <Dialog.Trigger asChild>
-          <LinkOverlay asChild>
-            <Link></Link>
-          </LinkOverlay>
-        </Dialog.Trigger>
-        <Portal>
-          <Dialog.Backdrop />
-          <Dialog.Positioner>
-            <Dialog.Content minW={"800px"}>
-              <Dialog.Header>
-                <Dialog.Title>Workout Creation</Dialog.Title>
-              </Dialog.Header>
-              <Dialog.Body>
-                <CheckboxGroup defaultValue={selected_exercises}>
-                  <SimpleGrid gap={4}>
-                    {exercises.map((exercise) => {
-                      return <MiniExerciseCard key={exercise._id} exercise={exercise}/>
-                    })}
-                  </SimpleGrid>
-                </CheckboxGroup>
-              </Dialog.Body>
-              <Dialog.Footer>
-                <Button variant="outline" onClick={() => handleStep(step - 1)}>Back</Button>
-                {step === 3 && 
-                  <Dialog.ActionTrigger asChild>
-                    <Button
-                      colorPalette="blue"
-                      onClick={() => setStep(0)}
-                      >Finish</Button>
-                  </Dialog.ActionTrigger>
-                }
-                {step !== 3 && <Button
-                  colorPalette="blue"
-                  onClick={() => handleStep(step + 1)}
-                  >
-                  Next
-                </Button>}
-              </Dialog.Footer>
-              <Dialog.CloseTrigger asChild>
-                <CloseButton />
-              </Dialog.CloseTrigger>
-              {/* Add steps down here for workout creation */}
-              <Center p={5}>
-                <Steps.Root step={step} count={3} >
-                  <Steps.List>
-                    <Steps.Item index={0} title={"Choose Exercises"}>
-                      <Steps.Indicator />
-                      <Steps.Title>{"Choose Exercises"}</Steps.Title>
-                      <Steps.Separator />
-                    </Steps.Item>
-                    <Steps.Item index={1} title={"Set Reps and Weights"}>
-                      <Steps.Indicator />
-                      <Steps.Title>{"Set Reps and Weights"}</Steps.Title>
-                      <Steps.Separator />
-                    </Steps.Item>
-                    <Steps.Item index={2} title={"Review Exercises"}>
-                      <Steps.Indicator />
-                      <Steps.Title>{"Review Exercises"}</Steps.Title>
-                      <Steps.Separator />
-                    </Steps.Item>
-                  </Steps.List>
-                  <Steps.CompletedContent>All steps are complete!</Steps.CompletedContent>
-                </Steps.Root>
-              </Center>
-            </Dialog.Content>
-          </Dialog.Positioner>
-        </Portal>
-      </Dialog.Root>
+      <LinkOverlay asChild>
+        <Link onClick={() => {
+          dialog.open("a", {
+            title: "Workout Creation",
+            content: (
+              <CheckboxGroup defaultValue={selectedExercises}>
+                <SimpleGrid gap={4}>
+                  {exercises.map((exercise) => {
+                    return <MiniExerciseCard key={exercise._id} exercise={exercise}/>
+                  })}
+                </SimpleGrid>
+              </CheckboxGroup>
+            ),
+            step: step,
+            incrementStep: incrementStep,
+            decrementStep: decrementStep,
+            resetStep: resetStep,
+          })
+          dialogOpen.current = true
+        }}></Link>
+      </LinkOverlay>
+      <dialog.Viewport />
       <Card.Footer>
         <IconButton colorPalette={"red"} onClick={() => handleDeleteWorkout(userID, workout._id)}><AiTwotoneDelete /></IconButton>
       </Card.Footer>
