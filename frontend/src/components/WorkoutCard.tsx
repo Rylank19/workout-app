@@ -1,12 +1,13 @@
 import { Workout } from '@/store/workout.ts'
 import { useUserStore } from '@/store/user.ts';
 import { Toaster, toaster } from './ui/toaster.tsx';
-import { Button, ButtonGroup, Card, Center, CheckboxGroup, CloseButton, Dialog, Float, IconButton, Image, Link, LinkBox, LinkOverlay, Portal, SimpleGrid, Steps } from '@chakra-ui/react';
+import { Card, CheckboxGroup, IconButton, Image, Link, LinkOverlay, SimpleGrid, Text, VStack } from '@chakra-ui/react';
 import { AiTwotoneDelete } from 'react-icons/ai';
 import MiniExerciseCard from './ExerciseMiniCard.tsx';
 import { Exercise } from '@/store/exercise.ts';
 import { dialog } from '@/components/WorkoutDialog.tsx'
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import RepCard from '@/components/RepCard.tsx';
 
 const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exercise[]}) => {
   const {userID} = useUserStore();
@@ -37,69 +38,67 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
   }
   const [step, setStep] = useState(0)
 
-  const incrementStep = () => {
-    if (step + 1 > 3)
-      setStep(3)
-    else
-      setStep(step + 1)
-  }
-
-  const decrementStep = () => {
-    if (step - 1 < 0)
-      setStep(0)
-    else
-      setStep(step - 1)
-  }
-
-  const resetStep = () => {
-    setStep(0)
-  }
-
   const dialogOpen = useRef(false)
-  const [selectedExercises, setSelectedExercises] = useState<string[]>(workout.exercises.map(exercise => exercise.exerciseId));
+  const selectedExercises = useRef<string[]>(workout.exercises.map(exercise => exercise.exerciseId));
+
+  // state for order of selecting exercises
+  interface numberEntries {
+    id: string;
+    value: number
+  }
+
+  const [exerciseStates, setExerciseStates] = useState<numberEntries[]>([]);
+  const [nextNumber, setNextNumber] = useState(1);
+
+  const handleToggle = useCallback((id: string) => {
+    setExerciseStates(prev => [...prev, {id: id, value: 3}])
+  }, [exerciseStates]);
 
   // this was my approach to getting the dialog to update when the step state was changed
   useEffect(() => {
+    const getExercisesFromIds = (exerciseIds : string[]) => {
+      const exercises_found = exerciseIds.map(id => exercises.find(x=> x._id === id));
+  
+      if (!exercises_found) return {};
+      return exercises_found;
+    }
+
     if (dialogOpen.current) {
-      console.log(selectedExercises)
-      if (step !== 1) {
+      if (step !== 1 && step !== 0) {
         dialog.update("a", {
-          title: "Workout Creation",
           content: (
-            <CheckboxGroup defaultValue={selectedExercises}>
+            <Text>Step {step}</Text>
+          ),
+          step: step,
+        })
+      } else if (step === 0) {
+        dialog.update("a", {
+          content: (
+            <CheckboxGroup defaultValue={selectedExercises.current} onValueChange={(value) => selectedExercises.current = value}>
               <SimpleGrid gap={4}>
-                {exercises.map((exercise) => {
-                  return <MiniExerciseCard key={exercise._id} exercise={exercise}/>
+                {exercises.map((exercise, index) => {
+                  return <MiniExerciseCard key={exercise._id} exercise={exercise} number={exerciseStates.find(value => value.id === exercise._id)?.value ?? -1} onToggle={() => handleToggle(exercise._id)}/>
                 })}
               </SimpleGrid>
             </CheckboxGroup>
           ),
           step: step,
-          incrementStep: incrementStep,
-          decrementStep: decrementStep,
-          resetStep: resetStep, // I should make an object for the dialog props so that I am not retyping these every time
         })
       }
       else if (step === 1) {
         dialog.update("a", {
-          title: "Workout Creation",
           content: (
-            <CheckboxGroup value={selectedExercises} onValueChange={setSelectedExercises}>
-              <SimpleGrid gap={4}>
-                {exercises.map((exercise) => {
-                  return <MiniExerciseCard key={exercise._id} exercise={exercise}/>
-                })}
-              </SimpleGrid>
-            </CheckboxGroup>
+            <VStack gap={4}>
+              {getExercisesFromIds(selectedExercises.current).map((exercise, index) => {
+                return <RepCard exercise={exercise} index={index} />
+              })}
+            </VStack>
           ),
-          step: step,
-          incrementStep: incrementStep,
-          decrementStep: decrementStep,
-          resetStep: resetStep, // I should make an object for the dialog props so that I am not retyping these every time
+          step: step
         })
       }
     }
-  }, [selectedExercises, step, exercises, incrementStep, decrementStep])
+  }, [step, exercises, exerciseStates, handleToggle])
 
   return (
     <Card.Root variant={'elevated'} overflow={"hidden"} key={workout._id} flexDirection={"row"} width={"2xl"}>
@@ -116,18 +115,16 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
           dialog.open("a", {
             title: "Workout Creation",
             content: (
-              <CheckboxGroup defaultValue={selectedExercises}>
+              <CheckboxGroup defaultValue={selectedExercises.current} onValueChange={(value) => selectedExercises.current = value}>
                 <SimpleGrid gap={4}>
-                  {exercises.map((exercise) => {
-                    return <MiniExerciseCard key={exercise._id} exercise={exercise}/>
+                  {exercises.map((exercise, index) => {
+                    return <MiniExerciseCard key={exercise._id} exercise={exercise} number={exerciseStates.find(value => value.id === exercise._id)?.value ?? -1} onToggle={() => handleToggle(exercise._id)} />
                   })}
                 </SimpleGrid>
               </CheckboxGroup>
             ),
             step: step,
-            incrementStep: incrementStep,
-            decrementStep: decrementStep,
-            resetStep: resetStep,
+            setter: setStep,
           })
           dialogOpen.current = true
         }}></Link>

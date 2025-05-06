@@ -1,16 +1,32 @@
 import { Button, Center, CloseButton, Dialog, Link, LinkOverlay, Portal, SimpleGrid, Steps, createOverlay } from "@chakra-ui/react"
 
 export interface DialogProps {
-  title: string
+  title?: string
   content?: React.ReactNode
   step: number,
-  incrementStep: () => void
-  decrementStep: () => void
-  resetStep: () => void
+  readonly setter?: React.Dispatch<React.SetStateAction<number>>
 }
 
 export const dialog = createOverlay<DialogProps>((props) => {
-  const { title, content, step, incrementStep, decrementStep, resetStep, ...rest } = props
+  const { title, content, step, setter, ...rest } = props
+  const incrementStep = () => {
+    if (step + 1 > 3)
+      setter(3)
+    else
+      setter(step + 1)
+  }
+  
+  const decrementStep = () => {
+    if (step - 1 < 0)
+      setter(0)
+    else
+      setter(step - 1)
+  }
+  
+  const resetStep = () => {
+    setter(0)
+  }
+
   return (
     <Dialog.Root {...rest}>
     <Portal>
