@@ -8,8 +8,10 @@ import { Exercise } from '@/store/exercise.ts';
 import { dialog } from '@/components/WorkoutDialog.tsx'
 import { useCallback, useEffect, useRef, useState } from 'react';
 import RepCard from '@/components/RepCard.tsx';
+import WorkoutDialogStepContent from './WorkoutDialogStepContent.tsx';
 
 const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exercise[]}) => {
+  
   const {userID} = useUserStore();
   const handleDeleteWorkout = async (uid: string, wid : string) => {
     // const {success, message} = await deleteWorkout(uid, eid);
@@ -32,73 +34,12 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
           action: {
           label: "Close",
           onClick: () => console.log("Closed"),
-          }
+        }
       })
     }
   }
-  const [step, setStep] = useState(0)
-
-  const dialogOpen = useRef(false)
+  const [isDialogOpen, setDialogOpen] = useState(false);
   const selectedExercises = useRef<string[]>(workout.exercises.map(exercise => exercise.exerciseId));
-
-  // state for order of selecting exercises
-  interface numberEntries {
-    id: string;
-    value: number
-  }
-
-  const [exerciseStates, setExerciseStates] = useState<numberEntries[]>([]);
-  const [nextNumber, setNextNumber] = useState(1);
-
-  const handleToggle = useCallback((id: string) => {
-    setExerciseStates(prev => [...prev, {id: id, value: 3}])
-  }, [exerciseStates]);
-
-  // this was my approach to getting the dialog to update when the step state was changed
-  useEffect(() => {
-    const getExercisesFromIds = (exerciseIds : string[]) => {
-      const exercises_found = exerciseIds.map(id => exercises.find(x=> x._id === id));
-  
-      if (!exercises_found) return {};
-      return exercises_found;
-    }
-
-    if (dialogOpen.current) {
-      if (step !== 1 && step !== 0) {
-        dialog.update("a", {
-          content: (
-            <Text>Step {step}</Text>
-          ),
-          step: step,
-        })
-      } else if (step === 0) {
-        dialog.update("a", {
-          content: (
-            <CheckboxGroup defaultValue={selectedExercises.current} onValueChange={(value) => selectedExercises.current = value}>
-              <SimpleGrid gap={4}>
-                {exercises.map((exercise, index) => {
-                  return <MiniExerciseCard key={exercise._id} exercise={exercise} number={exerciseStates.find(value => value.id === exercise._id)?.value ?? -1} onToggle={() => handleToggle(exercise._id)}/>
-                })}
-              </SimpleGrid>
-            </CheckboxGroup>
-          ),
-          step: step,
-        })
-      }
-      else if (step === 1) {
-        dialog.update("a", {
-          content: (
-            <VStack gap={4}>
-              {getExercisesFromIds(selectedExercises.current).map((exercise, index) => {
-                return <RepCard exercise={exercise} index={index} />
-              })}
-            </VStack>
-          ),
-          step: step
-        })
-      }
-    }
-  }, [step, exercises, exerciseStates, handleToggle])
 
   return (
     <Card.Root variant={'elevated'} overflow={"hidden"} key={workout._id} flexDirection={"row"} width={"2xl"}>
@@ -112,21 +53,14 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
       </Card.Body>
       <LinkOverlay asChild>
         <Link onClick={() => {
+          setDialogOpen(true);
           dialog.open("a", {
             title: "Workout Creation",
-            content: (
-              <CheckboxGroup defaultValue={selectedExercises.current} onValueChange={(value) => selectedExercises.current = value}>
-                <SimpleGrid gap={4}>
-                  {exercises.map((exercise, index) => {
-                    return <MiniExerciseCard key={exercise._id} exercise={exercise} number={exerciseStates.find(value => value.id === exercise._id)?.value ?? -1} onToggle={() => handleToggle(exercise._id)} />
-                  })}
-                </SimpleGrid>
-              </CheckboxGroup>
-            ),
-            step: step,
-            setter: setStep,
+            content: <WorkoutDialogStepContent 
+            exercises={exercises}
+            selectedExercises={selectedExercises}
+            />,
           })
-          dialogOpen.current = true
         }}></Link>
       </LinkOverlay>
       <dialog.Viewport />

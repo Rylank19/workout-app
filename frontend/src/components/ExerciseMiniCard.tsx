@@ -3,9 +3,10 @@ import { Exercise } from '@/store/exercise.ts';
 import { useRef, useState } from 'react';
 
 
-const MiniExerciseCard = ({exercise, number, onToggle} : {exercise : Exercise, number: number, onToggle?: () => void}) => {
+const MiniExerciseCard = ({exercise, number} : {exercise : Exercise, number: number}) => {
+  console.log("Render", exercise._id, number);
   return (
-    <CheckboxCard.Root variant={'outline'} key={exercise._id} value={exercise._id} colorPalette={"teal"} onClick={onToggle}>
+    <CheckboxCard.Root variant={'outline'} key={exercise._id} value={exercise._id} colorPalette={"teal"}>
       <CheckboxCard.HiddenInput />
       <CheckboxCard.Control p={0} alignContent={"center"} alignItems={"center"}>
         <CheckboxCard.Content p={5}>
