@@ -6,12 +6,16 @@ import { BsCalendar3Week } from "react-icons/bs";
 import { IoMoon, IoSettingsSharp } from "react-icons/io5";
 import { useColorMode } from './ui/color-mode';
 import { LuSun } from 'react-icons/lu';
-import { Link as ReactRouterLink } from 'react-router-dom';
+import { Link as ReactRouterLink, useLocation } from 'react-router-dom';
 import './NavBar.css'
+import { useState } from 'react';
 
 
 const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode(); // this is a hook from chakraUI
+  const location = useLocation();
+  const currentRoute = location.pathname;
+  console.log(currentRoute);
 
   return (
     <Container>
@@ -42,24 +46,24 @@ const NavBar = () => {
 
         {/* Section for tabs */}
         <AbsoluteCenter axis={"horizontal"}>
-          <Tabs.Root key={"enclosed"} defaultValue="exercises" variant={"enclosed"}>
+          <Tabs.Root key={"enclosed"} variant={"enclosed"} value={currentRoute}>
             <Tabs.List>
-              <Tabs.Trigger value="exercises" asChild>
+              <Tabs.Trigger value="/exercises" asChild>
                 <ChakraLink unstyled asChild variant={"plain"}>
                   <ReactRouterLink to="/exercises" className='tabs'><FaDumbbell />Exercises</ReactRouterLink>
                 </ChakraLink>
               </Tabs.Trigger>
-              <Tabs.Trigger value="workouts" asChild>
+              <Tabs.Trigger value="/workouts" asChild>
                 <ChakraLink unstyled asChild variant={"plain"}>
                   <ReactRouterLink to="/workouts" className='tabs'><GiWeightLiftingUp />Workouts</ReactRouterLink>
                 </ChakraLink>
               </Tabs.Trigger>
-              <Tabs.Trigger value="plans" asChild>
+              <Tabs.Trigger value="/plans" asChild>
                 <ChakraLink unstyled asChild variant={"plain"}>
                   <ReactRouterLink to="/plans" className='tabs'><MdNotes />Plans</ReactRouterLink>
                 </ChakraLink>
               </Tabs.Trigger>
-              <Tabs.Trigger value="calendar" asChild>
+              <Tabs.Trigger value="/calendar" asChild>
                 <ChakraLink unstyled asChild variant={"plain"}>
                   <ReactRouterLink to="/calendar" className='tabs'><BsCalendar3Week />Calendar</ReactRouterLink>
                 </ChakraLink>

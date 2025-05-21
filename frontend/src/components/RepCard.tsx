@@ -3,7 +3,7 @@ import { Button, Card, Field, HStack, NumberInput, VStack, Text, Center, IconBut
 import { useState } from "react";
 import { MdOutlineKeyboardArrowUp, MdOutlineKeyboardArrowDown } from "react-icons/md";
 
-const RepCard = ({exercise, index} : {exercise: Exercise, index : number}) => {
+const RepCard = ({exercise, moveElement} : {exercise: Exercise, moveElement: () => void}) => {
   const [weights, setWeights] = useState([{reps: "8", weight: "0"}])
 
   const handleChange = (value: string, field : string, index : number) => {
@@ -23,31 +23,31 @@ const RepCard = ({exercise, index} : {exercise: Exercise, index : number}) => {
     setWeights(newArray);
   }
 
-  const handleMoveUp = (index: number) => {
-    console.log("hello")
-    if (index === 0) return;
+  // const handleMoveUp = (index: number) => {
+  //   console.log("hello")
+  //   if (index === 0) return;
 
-    // move the item up one in the array by swapping
-    const array = [...weights];
-    const temp = array[index];
-    array[index] = array[index - 1];
-    array[index - 1] = temp;
-    setWeights(array);
-  }
+  //   // move the item up one in the array by swapping
+  //   const array = [...weights];
+  //   const temp = array[index];
+  //   array[index] = array[index - 1];
+  //   array[index - 1] = temp;
+  //   setWeights(array);
+  // }
 
-  const handleMoveDown = (index: number) => {
-    console.log("hello", index)
-    console.log(weights.length-1)
+  // const handleMoveDown = (index: number) => {
+  //   console.log("hello", index)
+  //   console.log(weights.length-1)
 
-    if (index === weights.length - 1) return;
+  //   if (index === weights.length - 1) return;
 
-    // move the item up one in the array by swapping
-    const array = [...weights];
-    const temp = array[index];
-    array[index] = array[index + 1];
-    array[index + 1] = temp;
-    setWeights(array);
-  }
+  //   // move the item up one in the array by swapping
+  //   const array = [...weights];
+  //   const temp = array[index];
+  //   array[index] = array[index + 1];
+  //   array[index + 1] = temp;
+  //   setWeights(array);
+  // }
 
   return (
     <Card.Root variant="subtle" w={"full"}>
@@ -104,12 +104,12 @@ const RepCard = ({exercise, index} : {exercise: Exercise, index : number}) => {
             </HStack>
             <HStack justifyContent={"center"}>
               <Field.Root>
-                <IconButton colorPalette={"red"} onClick={() => handleMoveDown(index)}>
+                <IconButton colorPalette={"red"} onClick={moveElement}>
                   <MdOutlineKeyboardArrowDown />
                 </IconButton>
               </Field.Root>
               <Field.Root>
-                <IconButton colorPalette={"teal"} onClick={() => handleMoveUp(index)}>
+                <IconButton colorPalette={"teal"} onClick={moveElement}>
                 <MdOutlineKeyboardArrowUp />
                 </IconButton>
               </Field.Root>

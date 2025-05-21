@@ -53,7 +53,6 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
       </Card.Body>
       <LinkOverlay asChild>
         <Link onClick={() => {
-          setDialogOpen(true);
           dialog.open("a", {
             title: "Workout Creation",
             content: <WorkoutDialogStepContent 
@@ -61,6 +60,7 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
             selectedExercises={selectedExercises}
             />,
           })
+          setDialogOpen(true);
         }}></Link>
       </LinkOverlay>
       <dialog.Viewport />

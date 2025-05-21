@@ -101,11 +101,21 @@ const WorkoutSubComponent = ({ step, exercises, selectedExercises }: {
   }
 
   if (step === 1) {
+    const moveElement = (index) => {
+      const reordered_exercise = exerciseStates[index];
+
+      const [, ...states] = exerciseStates;
+      console.log("start", exerciseStates)
+      states.splice(index+1, 0, reordered_exercise)
+      console.log("end", states)
+      setExerciseStates(states)
+    }
+
     return (
       <VStack gap={4}>
-        {selectedExercises.current.map((id, index) => {
-          const exercise = exercises.find(e => e._id === id);
-          return exercise ? <RepCard key={exercise._id} exercise={exercise} index={index} /> : null;
+        {exerciseStates.map((id, index) => {
+          const exercise = exercises.find(e => e._id === id.id);
+          return exercise ? <RepCard key={exercise._id} exercise={exercise} moveElement={() => moveElement(index)} /> : null;
         })}
       </VStack>
     );
