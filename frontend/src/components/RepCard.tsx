@@ -43,7 +43,7 @@ const RepCard = ({exercise, moveElementUp, moveElementDown, clicked, setCurrentE
   } : {
     border:"",
     borderStyle:"",
-    borderWidth:"",
+    borderWidth:"1px",
     buttonColorUp:"gray.700",
     buttonColorDown:"gray.700",
   }
