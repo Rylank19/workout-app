@@ -18,6 +18,8 @@ const WorkoutSubComponent = ({ step, exercises, selectedExercises }: {
 
   const [exerciseStates, setExerciseStates] = useState<numberEntries[]>([]);
   const nextNumberRef = useRef(1);
+  // state for step 1
+  const [currentElement, setCurrentElement] = useState<number>(-1); // -1 indicates no element selected
 
   const handleToggle = (id: string) => {
     setExerciseStates(prev => {
@@ -101,21 +103,44 @@ const WorkoutSubComponent = ({ step, exercises, selectedExercises }: {
   }
 
   if (step === 1) {
-    const moveElement = (index) => {
-      const reordered_exercise = exerciseStates[index];
+    const moveElementUp = (index) => {
+      // TODO: Is there a better way of swapping elements in state than making a complete copy? maybe something with a memoization structure?
+      const reordered_exercise = exerciseStates[index]; // this is the exercise that needs moved up
 
-      const [, ...states] = exerciseStates;
-      console.log("start", exerciseStates)
-      states.splice(index+1, 0, reordered_exercise)
-      console.log("end", states)
-      setExerciseStates(states)
+      if (index == 0 || exerciseStates.length <= 1) return; // don't do anything if at top or with 1 element
+
+      const states = [...exerciseStates]; // make a copy of exerciseStates
+
+      // swap elements
+      states[index] = states[index - 1]; // move the element above down 1
+      states[index-1] = reordered_exercise; // assign the selected element to the slot above
+
+      setCurrentElement(index-1)
+      setExerciseStates(states) // set the new state
+    }
+
+    const moveElementDown = (index) => {
+      // TODO: Is there a better way of swapping elements in state than making a complete copy? maybe something with a memoization structure?
+      const reordered_exercise = exerciseStates[index]; // this is the exercise that needs moved up
+
+      if (index == exerciseStates.length - 1 || exerciseStates.length <= 1) return; // don't do anything if at bottom or with 1 element
+
+      const states = [...exerciseStates]; // make a copy of exerciseStates
+
+      // swap elements
+      states[index] = states[index + 1]; // move the element below up 1
+      states[index + 1] = reordered_exercise; // assign the selected element to the slot above
+
+      console.log("setting index to " + (index + 1))
+      setCurrentElement(index+1)
+      setExerciseStates(states) // set the new state
     }
 
     return (
       <VStack gap={4}>
         {exerciseStates.map((id, index) => {
           const exercise = exercises.find(e => e._id === id.id);
-          return exercise ? <RepCard key={exercise._id} exercise={exercise} moveElement={() => moveElement(index)} /> : null;
+          return exercise ? <RepCard key={exercise._id} exercise={exercise} moveElementUp={() => moveElementUp(index)} moveElementDown={() => moveElementDown(index)} clicked={currentElement === index} setCurrentElement={() => setCurrentElement(index)}/> : null;
         })}
       </VStack>
     );

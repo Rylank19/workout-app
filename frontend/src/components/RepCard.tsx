@@ -3,8 +3,9 @@ import { Button, Card, Field, HStack, NumberInput, VStack, Text, Center, IconBut
 import { useState } from "react";
 import { MdOutlineKeyboardArrowUp, MdOutlineKeyboardArrowDown } from "react-icons/md";
 
-const RepCard = ({exercise, moveElement} : {exercise: Exercise, moveElement: () => void}) => {
+const RepCard = ({exercise, moveElementUp, moveElementDown, clicked, setCurrentElement} : {exercise: Exercise, moveElementUp: () => void, moveElementDown: () => void, clicked : boolean, setCurrentElement : () => void }) => {
   const [weights, setWeights] = useState([{reps: "8", weight: "0"}])
+  console.log("Rerendered" + exercise.name + "Clicked = " + clicked)
 
   const handleChange = (value: string, field : string, index : number) => {
     // is a deep copy necessary?
@@ -23,34 +24,32 @@ const RepCard = ({exercise, moveElement} : {exercise: Exercise, moveElement: () 
     setWeights(newArray);
   }
 
-  // const handleMoveUp = (index: number) => {
-  //   console.log("hello")
-  //   if (index === 0) return;
+  const handleMoveUp = (e) => {
+    e.stopPropagation();
+    moveElementUp();
+  }
 
-  //   // move the item up one in the array by swapping
-  //   const array = [...weights];
-  //   const temp = array[index];
-  //   array[index] = array[index - 1];
-  //   array[index - 1] = temp;
-  //   setWeights(array);
-  // }
+  const handleMoveDown = (e) => {
+    e.stopPropagation();
+    moveElementDown();
+  }
 
-  // const handleMoveDown = (index: number) => {
-  //   console.log("hello", index)
-  //   console.log(weights.length-1)
-
-  //   if (index === weights.length - 1) return;
-
-  //   // move the item up one in the array by swapping
-  //   const array = [...weights];
-  //   const temp = array[index];
-  //   array[index] = array[index + 1];
-  //   array[index + 1] = temp;
-  //   setWeights(array);
-  // }
+  const variant = clicked ? {
+    border:"white",
+    borderStyle:"solid",
+    borderWidth:"1px",
+    buttonColorUp:"",
+    buttonColorDown:"",
+  } : {
+    border:"",
+    borderStyle:"",
+    borderWidth:"",
+    buttonColorUp:"gray.700",
+    buttonColorDown:"gray.700",
+  }
 
   return (
-    <Card.Root variant="subtle" w={"full"}>
+    <Card.Root variant="subtle" w={"full"} border={variant.border} borderStyle={variant.borderStyle} borderWidth={variant.borderWidth} onClick={setCurrentElement}>
       <Card.Header>
         <Card.Title>{exercise.name}</Card.Title>
       </Card.Header>
@@ -104,12 +103,12 @@ const RepCard = ({exercise, moveElement} : {exercise: Exercise, moveElement: () 
             </HStack>
             <HStack justifyContent={"center"}>
               <Field.Root>
-                <IconButton colorPalette={"red"} onClick={moveElement}>
+                <IconButton colorPalette={"red"} bgColor={variant.buttonColorDown} onClick={handleMoveDown}>
                   <MdOutlineKeyboardArrowDown />
                 </IconButton>
               </Field.Root>
               <Field.Root>
-                <IconButton colorPalette={"teal"} onClick={moveElement}>
+                <IconButton colorPalette={"teal"} bgColor={variant.buttonColorUp} onClick={handleMoveUp}>
                 <MdOutlineKeyboardArrowUp />
                 </IconButton>
               </Field.Root>
