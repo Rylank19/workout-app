@@ -38,8 +38,8 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
       })
     }
   }
-  const [isDialogOpen, setDialogOpen] = useState(false);
   const selectedExercises = useRef<string[]>(workout.exercises.map(exercise => exercise.exerciseId));
+  const selectedExercisesNumbers = useRef<number[]>(workout.exercises.map( (exercise, index) => index)) //
 
   return (
     <Card.Root variant={'elevated'} overflow={"hidden"} key={workout._id} flexDirection={"row"} width={"2xl"}>
@@ -53,14 +53,16 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
       </Card.Body>
       <LinkOverlay asChild>
         <Link onClick={() => {
+          console.log("Opening")
           dialog.open("a", {
             title: "Workout Creation",
-            content: <WorkoutDialogStepContent 
+            content: () => (<WorkoutDialogStepContent 
             exercises={exercises}
             selectedExercises={selectedExercises}
-            />,
+            numbers={selectedExercisesNumbers}
+            workout={workout}
+            />),
           })
-          setDialogOpen(true);
         }}></Link>
       </LinkOverlay>
       <dialog.Viewport />

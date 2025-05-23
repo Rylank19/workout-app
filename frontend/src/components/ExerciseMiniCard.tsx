@@ -1,6 +1,7 @@
 import { Center, CheckboxCard, Text } from '@chakra-ui/react'
 import { Exercise } from '@/store/exercise.ts';
 import { useRef, useState } from 'react';
+import React from 'react';
 
 
 const MiniExerciseCard = ({exercise, number} : {exercise : Exercise, number: number}) => {

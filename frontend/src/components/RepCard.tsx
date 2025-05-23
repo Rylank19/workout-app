@@ -3,25 +3,33 @@ import { Button, Card, Field, HStack, NumberInput, VStack, Text, Center, IconBut
 import { useState } from "react";
 import { MdOutlineKeyboardArrowUp, MdOutlineKeyboardArrowDown } from "react-icons/md";
 
-const RepCard = ({exercise, moveElementUp, moveElementDown, clicked, setCurrentElement} : {exercise: Exercise, moveElementUp: () => void, moveElementDown: () => void, clicked : boolean, setCurrentElement : () => void }) => {
-  const [weights, setWeights] = useState([{reps: "8", weight: "0"}])
-  console.log("Rerendered" + exercise.name + "Clicked = " + clicked)
-
-  const handleChange = (value: string, field : string, index : number) => {
+const RepCard = ({exercise, moveElementUp, moveElementDown, clicked, setCurrentElement, workoutData, setWorkoutData} : 
+{exercise: Exercise, moveElementUp: () => void, moveElementDown: () => void, clicked : boolean, setCurrentElement : () => void,
+workoutData : {
+    reps: number;
+    weight: number;
+}[],
+setWorkoutData: (data: {
+    reps: number;
+    weight: number;
+}[]) => void }) => 
+{
+  const handleChange = (e, value: string, field : string, index : number) => {
     // is a deep copy necessary?
-    const array = [...weights]; // get the current stored values
-    array[index][field] = value; // change the value that caused the handleChange to run
-    setWeights(array) // set the state to the new weights
+    const newVal = Number(value.split(" ")[0]);
+    const array = [...workoutData]; // get the current stored values
+    array[index] = {...array[index], [field]: newVal}; // change the value that caused the handleChange to run
+    setWorkoutData(array) // set the state to the new weights
   }
 
   const handleAddInput = () => {
-    setWeights([...weights, {reps: "8", weight: "0"}]); // add a new set with a default of 8 reps
+    setWorkoutData([...workoutData, {reps: 8, weight: 0}]); // add a new set with a default of 8 reps
   }
 
   const handleDeleteInput = () => {
-    const newArray = [...weights]; // get the weight values
+    const newArray = [...workoutData]; // get the weight values
     newArray.pop();
-    setWeights(newArray);
+    setWorkoutData(newArray);
   }
 
   const handleMoveUp = (e) => {
@@ -56,7 +64,7 @@ const RepCard = ({exercise, moveElementUp, moveElementDown, clicked, setCurrentE
       <Card.Body>
         <HStack justifyContent={"space-between"}>
           <HStack gap={"1"}>
-            {weights.map((weight, index) => {
+            {workoutData.map((weight, index) => {
               return (
                 <VStack>
                   <HStack>
@@ -64,7 +72,7 @@ const RepCard = ({exercise, moveElementUp, moveElementDown, clicked, setCurrentE
                       <Text>Reps</Text>
                     </Center>
                     <Field.Root>
-                      <NumberInput.Root value={weight.reps} min={0} onValueChange={(e) => handleChange(e.value, "reps", index)}>
+                      <NumberInput.Root value={weight.reps.toString()} min={0} onValueChange={(e) => handleChange(e, e.value, "reps", index)}>
                         <NumberInput.Control />
                         <NumberInput.Input colorPalette={"teal"} name="reps"/>
                       </NumberInput.Root>
@@ -75,10 +83,10 @@ const RepCard = ({exercise, moveElementUp, moveElementDown, clicked, setCurrentE
                       <Text>Weight</Text>
                     </Center>
                     <Field.Root>
-                      <NumberInput.Root value={weight.weight} formatOptions={{style: "unit", unit: "pound"}} min={0} onValueChange={(e) => handleChange(e.value, "weight", index)}>
+                      <NumberInput.Root value={weight.weight.toString()} formatOptions={{style: "unit", unit: "pound"}} min={0} onValueChange={(e) => handleChange(e, e.value, "weight", index)}>
                           <HStack>
-                            <NumberInput.Input colorPalette={"teal"} name="weight" />
                             <NumberInput.Control />
+                            <NumberInput.Input colorPalette={"teal"} name="weight" />
                           </HStack>
                       </NumberInput.Root>
                     </Field.Root>

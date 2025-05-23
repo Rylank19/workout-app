@@ -1,14 +1,18 @@
 import { Exercise } from '@/store/exercise';
+import { Workout } from '@/store/workout';
 import { CheckboxGroup, SimpleGrid, VStack, Text, Button, Center, CloseButton, Dialog, Steps} from '@chakra-ui/react';
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import MiniExerciseCard from './ExerciseMiniCard';
 import RepCard from './RepCard';
 import { MdUpdateDisabled } from 'react-icons/md';
+import ExerciseReviewCard from './ExerciseReviewCard';
 
-const WorkoutSubComponent = ({ step, exercises, selectedExercises }: {
+const WorkoutSubComponent = ({ step, exercises, selectedExercises, numbers, workout }: {
   step: number;
   exercises: Exercise[];
   selectedExercises: React.RefObject<string[]>;
+  numbers: React.RefObject<number[]>;
+  workout: Workout;
 }) => {
   // state for order of selecting exercises
   interface numberEntries {
@@ -16,27 +20,18 @@ const WorkoutSubComponent = ({ step, exercises, selectedExercises }: {
     value: number
   }
 
-  const [exerciseStates, setExerciseStates] = useState<numberEntries[]>([]);
-  const nextNumberRef = useRef(1);
+  const [workoutData, setWorkoutData] = useState<Workout>(workout);
+
+  const [exerciseStates, setExerciseStates] = useState<numberEntries[]>(() => {
+    const startingStates = new Array(selectedExercises.current.length)
+    for (let i = 0; i < selectedExercises.current.length; i++) {
+      startingStates[i] = {id: selectedExercises.current[i], value: (i + 1)}
+    }
+    return startingStates;
+  });
+  const nextNumberRef = useRef(selectedExercises.current.length + 1);
   // state for step 1
   const [currentElement, setCurrentElement] = useState<number>(-1); // -1 indicates no element selected
-
-  const handleToggle = (id: string) => {
-    setExerciseStates(prev => {
-      const exists = prev.find(e => e.id === id);
-      let updated;
-
-      if (exists) {
-        updated = prev.filter(e => e.id !== id);
-      } else {
-        const value = nextNumberRef.current;
-        nextNumberRef.current += 1;
-        updated = [...prev, { id, value: value }]
-      }
-      selectedExercises = updated.map(e => e.id);
-      return updated;
-    });
-  }
 
   const handleValueChange = (selected: string[]) => {
     const currentSet = new Set(selected);      
@@ -78,6 +73,27 @@ const WorkoutSubComponent = ({ step, exercises, selectedExercises }: {
 
     selectedExercises.current = selected;
     setExerciseStates(updated);
+    setWorkoutData(prev => {
+      const exercises = updated.map(entry => {
+        return {exerciseId: entry.id, setData: [{reps: 8, weight: 0}]}
+      })
+
+      const newExercises = []
+      for (let i = 0; i < exercises.length; i++) {
+        if (!workoutData.exercises.find(e => e.exerciseId === exercises[i].exerciseId))
+          newExercises.push(exercises[i])
+      }
+
+      console.log("New Exercises")
+      console.log(newExercises)
+      return {
+        ...prev,
+        exercises: [
+          ...prev.exercises,
+          ...newExercises
+        ]
+      }
+    })
   }
 
   const numberMap = useMemo(() => {
@@ -90,7 +106,7 @@ const WorkoutSubComponent = ({ step, exercises, selectedExercises }: {
     return (
       <CheckboxGroup value={selectedExercises.current} onValueChange={handleValueChange}>
         <SimpleGrid gap={4}>
-          {exercises.map(exercise => (
+          {exercises.map( exercise => (
             <MiniExerciseCard
               key={exercise._id}
               exercise={exercise}
@@ -136,22 +152,70 @@ const WorkoutSubComponent = ({ step, exercises, selectedExercises }: {
       setExerciseStates(states) // set the new state
     }
 
+    const handleWorkoutSet = (id, data) => {
+      console.log("Called it")
+      setWorkoutData(prev => {
+        const currentExerciseIndex = prev.exercises.findIndex(e => e.exerciseId === id);
+        if (currentExerciseIndex === -1) {
+          return {
+            ...prev,
+            exercises: [...prev.exercises, {exerciseId: id, setData: data}]
+          }
+        }
+        console.log("Updating " + currentExerciseIndex)
+  
+        // update the currentWorkout
+        const updatedExercise = {
+          ...prev.exercises[currentExerciseIndex],
+          setData: data,
+        }
+
+        const updatedExercises = [...prev.exercises];
+        updatedExercises[currentExerciseIndex] = updatedExercise;
+
+        return {
+          ...prev,
+          exercises:updatedExercises,
+        }
+      });
+    }
+
     return (
       <VStack gap={4}>
         {exerciseStates.map((id, index) => {
           const exercise = exercises.find(e => e._id === id.id);
-          return exercise ? <RepCard key={exercise._id} exercise={exercise} moveElementUp={() => moveElementUp(index)} moveElementDown={() => moveElementDown(index)} clicked={currentElement === index} setCurrentElement={() => setCurrentElement(index)}/> : null;
+          let setData = [];
+          if (exercise) {
+            const exerciseData = workoutData.exercises.find(e => e.exerciseId == exercise._id)
+            setData = exerciseData?.setData ?? [{reps: 8, weight: 0}]
+            console.log(setData)
+          }
+
+          return exercise ? <RepCard key={exercise._id} exercise={exercise} moveElementUp={() => moveElementUp(index)} moveElementDown={() => moveElementDown(index)} clicked={currentElement === index} setCurrentElement={() => setCurrentElement(index)} workoutData={setData} setWorkoutData={(data) => handleWorkoutSet(exercise._id, data)}/> : null;
         })}
       </VStack>
     );
   }
 
-  return <Text>Step {step}</Text>;
+  if (step >= 2) {
+    // add all selectedExercises to set data
+    console.log("Workout data")
+    console.log(workoutData)
+    return (
+      <VStack gap={4}>
+        {workoutData.exercises.map(exercise => {
+          return <ExerciseReviewCard setsData={exercise.setData} exercise={exercises.find(e => e._id === exercise.exerciseId)} />
+        })}
+      </VStack>
+    )
+  }
 };
 
-const WorkoutDialogStepContent = ({ exercises, selectedExercises }: {
+const WorkoutDialogStepContent = ({ exercises, selectedExercises, numbers, workout }: {
   exercises: Exercise[];
   selectedExercises: React.RefObject<string[]>;
+  numbers: React.RefObject<number[]>;
+  workout: Workout;
 }) => {
   const [step, setStep] = useState(0)
 
@@ -173,10 +237,15 @@ const WorkoutDialogStepContent = ({ exercises, selectedExercises }: {
     setStep(0)
   }
 
+  useEffect(() => {
+    console.log("WorkoutDialogStepContent mounted");
+    return () => console.log("WorkoutDialogStepContent unmounted");
+  }, []);
+  
   return (
     <>
       <Dialog.Body>
-        <WorkoutSubComponent step={step} exercises={exercises} selectedExercises={selectedExercises}/>
+        <WorkoutSubComponent step={step} exercises={exercises} selectedExercises={selectedExercises} numbers={numbers} workout={workout}/>
       </Dialog.Body>
       <Dialog.Footer>
         <Button variant="outline" onClick={decrementStep}>Back</Button>
@@ -218,7 +287,7 @@ const WorkoutDialogStepContent = ({ exercises, selectedExercises }: {
               <Steps.Separator />
             </Steps.Item>
           </Steps.List>
-          <Steps.CompletedContent>All steps are complete!</Steps.CompletedContent>
+          <Steps.CompletedContent>Complete your workout!</Steps.CompletedContent>
         </Steps.Root>
       </Center>
     </>
