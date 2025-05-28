@@ -29,7 +29,7 @@ export const useExerciseStore = create<MyState>((set) => ({
         if (!newExercise.userID || !newExercise.name || !newExercise.muscleGroup) {
             return {success:false, message:"Please fill in all fields."}
         }
-        const res = await fetch("/api/exercises", {
+        const res = await fetch("/api/user/:uid/exercises", {
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
@@ -41,18 +41,15 @@ export const useExerciseStore = create<MyState>((set) => ({
         return {success: true, message: "Exercise created successfully"};
     },
     fetchExercises: async (uid) => {
-        const res = await fetch("/api/exercises/user-exercises", {
-            method: "POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify({userID: uid})
+        console.log(`/api/user/${uid}/exercises/`)
+        const res = await fetch(`/api/user/${uid}/exercises/`, {
+            method: "GET",
         });
         const data = await res.json();
         set({ exercises: data.data});
     },
     deleteExercise: async (uid, eid) => {
-        const res = await fetch(`/api/exercises/${eid}`, {
+        const res = await fetch(`/api/user/:uid/exercises/${eid}`, {
             method: "DELETE",
             headers:{
                 "Content-Type":"application/json"

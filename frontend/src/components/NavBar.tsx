@@ -18,7 +18,7 @@ const NavBar = () => {
   console.log(currentRoute);
 
   return (
-    <Container>
+    <Container height={"15vh"}>
       <Flex
         h={32}
         alignItems={"center"}

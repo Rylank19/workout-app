@@ -34,7 +34,7 @@ const ExerciseCard = ({exercise} : {exercise : Exercise}) => {
 }
 
   return (
-    <Card.Root variant={'subtle'} maxW="md" overflow={"hidden"} key={exercise._id}>
+    <Card.Root variant={'subtle'} w="md" overflow={"hidden"} key={exercise._id}>
       <Toaster />
       <Image height={"200px"} src='https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' alt={exercise + " image"}/>
       <Card.Body>

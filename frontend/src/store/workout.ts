@@ -23,11 +23,18 @@ interface MyState {
     workouts : Workout[],
     // setExercises: (exercises: []) => void,
     // createExercise: (newExercise: {userID: string, name: string; muscleGroup: string}) => Promise<Response>,
-    // fetchExercises: (uid: string) => Promise<void>,
+    fetchWorkouts: (uid: string) => Promise<void>,
     // deleteExercise: (uid: string, eid: string) => Promise<Response>,
     // updateExercise: (updatedExercise : Exercise, eid: string) => Promise<Response>
 }
 
-export const useWorkoutStore = create<MyState>(() => ({
+export const useWorkoutStore = create<MyState>((set) => ({
     workouts: [],
+    fetchWorkouts: async (uid) => {
+    const res = await fetch(`/api/workouts/${uid}`, {
+        method: "GET",
+    });
+    const data = await res.json();
+    set({ workouts: data.data});
+},
 })) // this is a callback ( the brackets mean we are returning an object)

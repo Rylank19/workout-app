@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 import User from '../models/user.model.js';
 
 export const getExercises = async (req, res) => {
-    const {userID} = req.body; // user will send this data
+    console.log(req.params);
+    const {userID} = req.params; // user will send this data
 
     if (!userID) {
         return res.status(400).json({ success:false, message:"Please provide all fields"});

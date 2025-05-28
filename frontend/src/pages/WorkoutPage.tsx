@@ -1,4 +1,4 @@
-import { Container, VStack } from "@chakra-ui/react"
+import { Button, Container, Flex, VStack, Float } from "@chakra-ui/react"
 import {Workout} from '@/store/workout.ts'
 import WorkoutCard from "@/components/WorkoutCard"
 import { useExerciseStore } from "@/store/exercise"
@@ -39,12 +39,17 @@ const WorkoutPage = () => {
   console.log("exercises", exercises)
 
   return (
-    <Container maxW={"100vw"} gap={4}>
-      <VStack>
-        {workouts.map(workout => {
-          return <WorkoutCard key={workout._id} workout={workout} exercises={exercises} />
-        })}
-      </VStack>
+    <Container gap={4} position={"relative"} h={"85vh"}>
+      <Flex direction={"column"} justify={"space-between"}>
+        <VStack>
+          {workouts.map(workout => {
+            return <WorkoutCard key={workout._id} workout={workout} exercises={exercises} />
+          })}
+        </VStack>
+      </Flex>
+      <Float placement={"bottom-center"} offsetY={"10"}>
+        <Button margin={5}>Create New Workout</Button>
+      </Float>
     </Container>
   )
 }

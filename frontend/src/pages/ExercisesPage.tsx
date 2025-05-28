@@ -2,7 +2,7 @@ import ExerciseCard from '@/components/ExerciseCard'
 import { Toaster, toaster } from '@/components/ui/toaster'
 import { useExerciseStore } from '@/store/exercise'
 import { useUserStore } from '@/store/user'
-import {Button, Container, Flex, SimpleGrid, Text, Dialog, Portal, Input, VStack, CloseButton } from '@chakra-ui/react'
+import {Button, Container, Flex, Float, Text, Dialog, Portal, Input, VStack, CloseButton } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 
 const ExercisesPage = () => {
@@ -46,18 +46,20 @@ const ExercisesPage = () => {
   }
 
   return (
-    <Container maxW={"100vw"} gap={4}>
+    <Container h={"85vh"} position={"relative"}>
       <Toaster/>
-      <Flex direction="column" justify={"space-between"} gap={10}>
+      {/* <Flex direction="column" justify={"space-between"} height={"85vh"}> */}
         {exercises.length === 0 && (<Text>Nothing to see here...</Text>)}
-        <SimpleGrid minChildWidth="md" columnGap="2" justifyContent={"start"}>
+        <Flex h={"85vh"} gap={4} flexWrap={'wrap'} overflow={"scroll"} scrollbar={"hidden"}>
           {exercises.map((exercise) => {
-            return <ExerciseCard key={exercise._id} exercise={exercise}/>
+            return <ExerciseCard key={exercise._id} exercise={exercise} />
           })}
-        </SimpleGrid>
+        </Flex>
         <Dialog.Root>
           <Dialog.Trigger asChild>
-            <Button>Create New Exercise</Button>
+            <Float placement={"bottom-center"} offsetY={"10"}>
+              <Button>Create New Exercise</Button>
+            </Float>
           </Dialog.Trigger>
           <Portal>
             <Dialog.Backdrop />
@@ -101,7 +103,7 @@ const ExercisesPage = () => {
             </Dialog.Positioner>
           </Portal>
         </Dialog.Root>
-      </Flex>
+      {/* </Flex> */}
     </Container>
   )
 }
