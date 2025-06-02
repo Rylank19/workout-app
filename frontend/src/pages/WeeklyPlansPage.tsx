@@ -1,8 +1,17 @@
-import React from 'react'
+import PlanCard from '@/components/plans/PlanCard'
+import { Container, VStack } from '@chakra-ui/react'
 
 const WeeklyPlansPage = () => {
+  const cardNames = ["Leg Day", "Back Day", "Abs Day", "Arms Day"]
+
   return (
-    <div>WeeklyPlansPage</div>
+    <Container>
+      <VStack direction={"column"} gap={4}>
+        {cardNames.map(name => {
+          return <PlanCard cardName={name} />
+        })}
+      </VStack>
+    </Container>
   )
 }
 
