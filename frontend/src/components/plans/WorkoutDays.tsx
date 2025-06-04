@@ -1,5 +1,5 @@
 import React from 'react'
-import { Center, Flex, For, Timeline } from "@chakra-ui/react"
+import { Box, Center, Flex, For, HStack, Text, Timeline, VStack } from "@chakra-ui/react"
 import { WorkoutEntry } from './PlanCard'
 
 const WorkoutDays = ({planData} : {planData : WorkoutEntry[]}) => {
@@ -17,29 +17,21 @@ const WorkoutDays = ({planData} : {planData : WorkoutEntry[]}) => {
     }
   }
 
-  const days = ["Sun.", "Mon.", "Tues.", "Wed.", "Thurs.", "Fri.", "Sat."]
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
   return (
-      <Timeline.Root alignItems={"center"} size={"md"} key={"md"}>
-        <For each={planList}>
-        {(item, index) => (
-          <Timeline.Item>
-            <Timeline.Content alignItems={"center"} w={"20"}>
-              <Timeline.Title>{days[index]}</Timeline.Title>
-            </Timeline.Content>
-            <Timeline.Connector display={"flex"} direction={"column"} justifyContent={"center"} w={"20"}>
-              <Timeline.Separator position={"relative"} top={"0"}/>
-              <Timeline.Indicator>{index}</Timeline.Indicator>
-            </Timeline.Connector>
-            <Timeline.Content alignItems={"center"} w={"20"}>
-              <Timeline.Title>
-                {item}
-              </Timeline.Title>
-            </Timeline.Content>
-          </Timeline.Item>
-        )}
-        </For>
-      </Timeline.Root>
+    <VStack gap={"0"}>
+      <For each={planList}>
+      {(item, index) => (
+        <Box w={"full"} borderX={"none"} borderY={"solid"} borderWidth={"1px"} borderTopWidth={index == 0 ? "2px" : ""} borderBottomWidth={index == 6 ? "2px" : ""}>
+          <HStack py={"2"} w={"full"}>
+            <Text w={"full"} textAlign={"end"} paddingRight={"5"} fontWeight={"bold"} textStyle={"2xl"}>{days[index]}</Text>
+            <Text w={"full"} color={"blue.500"} fontWeight={"bold"} paddingLeft={"5"} textStyle={"2xl"}>{item}</Text>
+          </HStack>
+        </Box>
+      )}
+      </For>
+    </VStack>
   )
 }
 

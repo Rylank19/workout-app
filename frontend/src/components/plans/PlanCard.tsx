@@ -43,7 +43,7 @@ const PlanCard = ({cardName} : {cardName : string}) => {
     <>
     <Card.Root variant={'subtle'} w="lg" overflow={"hidden"}>
       <Card.Body>
-        <Card.Title textAlign={"center"} paddingBottom={"5"}>{cardName}</Card.Title>
+        <Card.Title textAlign={"center"} paddingBottom={"5"} textStyle={"3xl"}>{cardName}</Card.Title>
         <Card.Description>
           <WorkoutDays planData={planData}/>
         </Card.Description>
