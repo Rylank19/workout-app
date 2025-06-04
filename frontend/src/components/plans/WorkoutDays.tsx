@@ -3,14 +3,15 @@ import { Center, Flex, For, Timeline } from "@chakra-ui/react"
 import { WorkoutEntry } from './PlanCard'
 
 const WorkoutDays = ({planData} : {planData : WorkoutEntry[]}) => {
-  const planList = new Array(7);
+  const planList = new Array(7).fill(0);
 
   for (const item of planData) {
     for (let i = 0; i < 7; i++) {
       if ((item.workoutDays & (1 << i) ) != 0) { // if day present
+        console.log("Workout " + (item.workoutTitle) + " on day " + (i))
         planList[i] = item.workoutTitle;
       }
-      else {
+      else if (planList[i] == 0) {
         planList[i] = "Rest Day"
       }
     }

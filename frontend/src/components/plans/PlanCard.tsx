@@ -17,22 +17,20 @@ const PlanCard = ({cardName} : {cardName : string}) => {
   const start = 0b1;
 
   const handleUpdatePlanData = (workoutTitle, day) => {
-    console.log("Made it here");
     setPlanData(prev => {
       const oldData = [...prev];
-      console.log("Got old data", oldData)
-      const dataToUpdate = oldData.find(item => item.workoutTitle == workoutTitle)
-      console.log("Data to update", dataToUpdate)
+      const indexToUpdate = oldData.findIndex(item => item.workoutTitle == workoutTitle)
       let newData;
-      if (dataToUpdate) {
-        newData = {workoutTitle: workoutTitle, workoutDays: dataToUpdate.workoutDays | start << day};
+      if (indexToUpdate != -1) {
+        newData = {workoutTitle: workoutTitle, workoutDays: oldData[indexToUpdate].workoutDays ^ start << day}; // use XOR to flip the specified bit
+        oldData[indexToUpdate] = newData; // update the index with the new data
         console.log(newData);
       } else {
         return prev;
       }
 
       console.log("Returning", [...oldData.filter(item => item.workoutTitle != workoutTitle), newData])
-      return [...oldData.filter(item => item.workoutTitle != workoutTitle), newData];
+      return oldData;
     })
   }
 
