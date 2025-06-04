@@ -5,10 +5,11 @@ import WorkoutPage from './pages/WorkoutPage';
 import ExercisesPage from './pages/ExercisesPage';
 import WeeklyPlansPage from './pages/WeeklyPlansPage';
 import CalendarPage from './pages/CalendarPage';
+import BackgroundImage from '@/assets/Contour Line.svg'
 
 function App() {
   return (
-    <Box minH={"100vh"}>
+    <Box style={{backgroundSize: '100%', backgroundImage: `url(${BackgroundImage}`}} minW="100vw" minH={"100vh"}>
       <NavBar />
       <Routes >
         <Route path="/">

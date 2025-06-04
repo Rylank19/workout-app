@@ -14,10 +14,10 @@ export interface Workout {
     }];
 }
 
-// interface Response {
-//     success: boolean;
-//     message: string;
-// }
+interface Response {
+    success: boolean;
+    message: string;
+}
 
 interface MyState {
     workouts : Workout[],
