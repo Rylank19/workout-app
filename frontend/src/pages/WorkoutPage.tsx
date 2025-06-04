@@ -1,6 +1,6 @@
 import { Button, Container, Flex, VStack, Float } from "@chakra-ui/react"
 import {Workout} from '@/store/workout.ts'
-import WorkoutCard from "@/components/WorkoutCard"
+import WorkoutCard from "@/components/workouts/WorkoutCard"
 import { useExerciseStore } from "@/store/exercise"
 import { useUserStore } from "@/store/user"
 import { useState, useEffect } from "react"

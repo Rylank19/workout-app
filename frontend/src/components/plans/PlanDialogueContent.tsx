@@ -1,26 +1,12 @@
-import { Tag, For, Flex, Text, Box, HStack } from "@chakra-ui/react";
-import { useState } from "react";
+import { For, Flex, Text, Box, HStack } from "@chakra-ui/react";
 import { WorkoutEntry } from "./PlanCard";
-
-const TagComponent = ({name, onClick, startColor} : {name: string, onClick: () => void, startColor : number}) => {
-  const [color, setColor] = useState(startColor > 0)
-
-  const handleClick = () => {
-    setColor(!color);
-    onClick();
-    console.log("On click done")
-  }
-
-  return (
-    <Tag.Root justifyContent={"center"} minW={"10"} minH={"10"} asChild variant="solid" colorPalette={color ? "blue" : "gray"}>
-      <button type="submit" onClick={handleClick}>
-        <Tag.Label>{name}</Tag.Label>
-      </button>
-    </Tag.Root>
-  )
-}
+import TagComponent from "./TagComponent";
+import React from "react";
+import MemoizedTag from "./MemoizedTag";
 
 const Content = ({planData, handleUpdatePlanData} : {planData : WorkoutEntry[], handleUpdatePlanData : (workout: string, days: number) => void}) => {
+  console.log("rerendering");
+
   return (
     <For each={planData}>
       {(workouts, index1) => (
@@ -31,9 +17,10 @@ const Content = ({planData, handleUpdatePlanData} : {planData : WorkoutEntry[], 
         <Box w={"10px"}/>
         <HStack>
           <For each={["Su", "Mo", "Tu", "Wed", "Th", "Fr", "Sa"]}>
-            {(day, index2) => (
-              <TagComponent name={day} startColor={workouts.workoutDays & ( 1 << index2)} onClick={() => handleUpdatePlanData(workouts.workoutTitle, index2)}/>
-            )}
+            {(day, index2) => {
+              const startColor = workouts.workoutDays & ( 1 << index2)
+              return <MemoizedTag key={day + workouts.workoutTitle} workoutTitle={workouts.workoutTitle} day={day} dayIndex={index2} color={startColor} onUpdate={handleUpdatePlanData}/>
+            }}
           </For>
         </HStack>
       </Flex>

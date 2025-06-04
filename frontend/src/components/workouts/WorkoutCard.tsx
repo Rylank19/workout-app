@@ -1,11 +1,11 @@
 import { Workout } from '@/store/workout.ts'
 import { useUserStore } from '@/store/user.ts';
-import { Toaster, toaster } from './ui/toaster.tsx';
+import { Toaster, toaster } from '../ui/toaster.tsx';
 import { Card, CheckboxGroup, IconButton, Image, Link, LinkOverlay, SimpleGrid, Text, VStack } from '@chakra-ui/react';
 import { AiTwotoneDelete } from 'react-icons/ai';
-import MiniExerciseCard from './ExerciseMiniCard.tsx';
+import MiniExerciseCard from '../exercises/ExerciseMiniCard.tsx';
 import { Exercise } from '@/store/exercise.ts';
-import { dialog } from '@/components/WorkoutDialog.tsx'
+import { dialog } from '@/components/workouts/WorkoutDialog.tsx'
 import { useCallback, useEffect, useRef, useState } from 'react';
 import RepCard from '@/components/RepCard.tsx';
 import WorkoutDialogStepContent from './WorkoutDialogStepContent.tsx';

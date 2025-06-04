@@ -1,4 +1,4 @@
-import ExerciseCard from '@/components/ExerciseCard'
+import ExerciseCard from '@/components/exercises/ExerciseCard'
 import { Toaster, toaster } from '@/components/ui/toaster'
 import { useExerciseStore } from '@/store/exercise'
 import { useUserStore } from '@/store/user'

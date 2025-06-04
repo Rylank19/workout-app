@@ -4,7 +4,7 @@ interface DialogProps {
   title: string
   description?: string
   content?: React.ReactNode
-  handleOpenChange: () => void
+  handleOpenChange?: () => void
 }
 
 

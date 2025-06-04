@@ -2,10 +2,10 @@ import { Exercise } from '@/store/exercise';
 import { Workout } from '@/store/workout';
 import { CheckboxGroup, SimpleGrid, VStack, Text, Button, Center, CloseButton, Dialog, Steps} from '@chakra-ui/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import MiniExerciseCard from './ExerciseMiniCard';
-import RepCard from './RepCard';
+import MiniExerciseCard from '../exercises/ExerciseMiniCard';
+import RepCard from '../RepCard';
 import { MdUpdateDisabled } from 'react-icons/md';
-import ExerciseReviewCard from './ExerciseReviewCard';
+import ExerciseReviewCard from '../exercises/ExerciseReviewCard';
 
 const WorkoutSubComponent = ({ step, exercises, selectedExercises, numbers, workout }: {
   step: number;

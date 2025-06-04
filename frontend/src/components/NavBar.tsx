@@ -8,7 +8,6 @@ import { useColorMode } from './ui/color-mode';
 import { LuSun } from 'react-icons/lu';
 import { Link as ReactRouterLink, useLocation } from 'react-router-dom';
 import './NavBar.css'
-import { useState } from 'react';
 
 
 const NavBar = () => {
@@ -75,10 +74,10 @@ const NavBar = () => {
 
         {/* Section for the settings Icon Button */}
         <HStack>
-          <IconButton>
+          <IconButton colorPalette={"cyan"}>
             <IoSettingsSharp />
           </IconButton>
-          <Button onClick={toggleColorMode}>{colorMode === "light" ? <IoMoon /> : <LuSun />}</Button>
+          <Button colorPalette={"cyan"} onClick={toggleColorMode}>{colorMode === "light" ? <IoMoon /> : <LuSun />}</Button>
         </HStack>
       </Flex>
     </Container>
