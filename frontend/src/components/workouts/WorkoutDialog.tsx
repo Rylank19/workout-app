@@ -4,14 +4,15 @@ import { JSX, useMemo, useState } from "react"
 export interface DialogProps {
   title?: string
   content: () => JSX.Element
+  handleOpenChange?: () => void
 }
 
 export const dialog = createOverlay<DialogProps>((props) => {
-  const { title, content, ...rest } = props
+  const { title, content, handleOpenChange, ...rest } = props
 
   console.log("dialog happening twice")
   return (
-    <Dialog.Root {...rest}>
+    <Dialog.Root {...rest} onOpenChange={handleOpenChange}>
     <Portal>
       <Dialog.Backdrop />
       <Dialog.Positioner>

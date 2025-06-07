@@ -3,24 +3,24 @@ import { Workout } from '@/store/workout';
 import { CheckboxGroup, SimpleGrid, VStack, Text, Button, Center, CloseButton, Dialog, Steps} from '@chakra-ui/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import MiniExerciseCard from '../exercises/ExerciseMiniCard';
-import RepCard from '../RepCard';
+import RepCard from './RepCard';
 import { MdUpdateDisabled } from 'react-icons/md';
 import ExerciseReviewCard from '../exercises/ExerciseReviewCard';
+import { useWorkoutStore } from '@/store/workout';
+import { dialog } from './WorkoutDialog';
 
-const WorkoutSubComponent = ({ step, exercises, selectedExercises, numbers, workout }: {
+const WorkoutSubComponent = ({ step, exercises, selectedExercises, workoutData, setWorkoutData }: {
   step: number;
   exercises: Exercise[];
   selectedExercises: React.RefObject<string[]>;
-  numbers: React.RefObject<number[]>;
-  workout: Workout;
+  workoutData: Workout;
+  setWorkoutData: React.Dispatch<React.SetStateAction<Workout>>;
 }) => {
   // state for order of selecting exercises
   interface numberEntries {
     id: string;
     value: number
   }
-
-  const [workoutData, setWorkoutData] = useState<Workout>(workout);
 
   const [exerciseStates, setExerciseStates] = useState<numberEntries[]>(() => {
     const startingStates = new Array(selectedExercises.current.length)
@@ -178,16 +178,17 @@ const WorkoutSubComponent = ({ step, exercises, selectedExercises, numbers, work
           exercises:updatedExercises,
         }
       });
+      console.log(workoutData)
     }
 
     return (
       <VStack gap={4}>
         {exerciseStates.map((id, index) => {
           const exercise = exercises.find(e => e._id === id.id);
-          let setData = [];
+          let setData : {reps: number, weight: number}[] = [];
           if (exercise) {
             const exerciseData = workoutData.exercises.find(e => e.exerciseId == exercise._id)
-            setData = exerciseData?.setData ?? [{reps: 8, weight: 0}]
+            setData = exerciseData?.setData ?? []
             console.log(setData)
           }
 
@@ -211,13 +212,16 @@ const WorkoutSubComponent = ({ step, exercises, selectedExercises, numbers, work
   }
 };
 
-const WorkoutDialogStepContent = ({ exercises, selectedExercises, numbers, workout }: {
+const WorkoutDialogStepContent = ({ exercises, workout, setNewWorkout }: {
   exercises: Exercise[];
-  selectedExercises: React.RefObject<string[]>;
-  numbers: React.RefObject<number[]>;
   workout: Workout;
+  setNewWorkout: React.Dispatch<React.SetStateAction<Workout>>;
 }) => {
   const [step, setStep] = useState(0)
+  const selectedExercises = useRef<string[]>(workout.exercises.map(exercise => exercise.exerciseId));
+  const numbers = useRef<number[]>(workout.exercises.map( (exercise, index) => index))
+  const {createWorkout} = useWorkoutStore();
+  const [workoutData, setWorkoutData] = useState<Workout>(workout);
 
   const incrementStep = () => {
     if (step + 1 > 3)
@@ -233,8 +237,9 @@ const WorkoutDialogStepContent = ({ exercises, selectedExercises, numbers, worko
       setStep(step - 1)
   }
   
-  const resetStep = () => {
-    setStep(0)
+  const storeAndReset = () => {
+    createWorkout(workoutData);
+    dialog.close("a")
   }
 
   useEffect(() => {
@@ -245,7 +250,7 @@ const WorkoutDialogStepContent = ({ exercises, selectedExercises, numbers, worko
   return (
     <>
       <Dialog.Body>
-        <WorkoutSubComponent step={step} exercises={exercises} selectedExercises={selectedExercises} numbers={numbers} workout={workout}/>
+        <WorkoutSubComponent workoutData={workoutData} setWorkoutData={setWorkoutData} step={step} exercises={exercises} selectedExercises={selectedExercises} />
       </Dialog.Body>
       <Dialog.Footer>
         <Button variant="outline" onClick={decrementStep}>Back</Button>
@@ -253,7 +258,7 @@ const WorkoutDialogStepContent = ({ exercises, selectedExercises, numbers, worko
           <Dialog.ActionTrigger asChild>
             <Button
               colorPalette="blue"
-              onClick={resetStep}
+              onClick={storeAndReset}
               >Finish</Button>
           </Dialog.ActionTrigger>
         }

@@ -1,6 +1,6 @@
 import { Exercise } from "@/store/exercise";
 import { Button, Card, Field, HStack, NumberInput, VStack, Text, Center, IconButton } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdOutlineKeyboardArrowUp, MdOutlineKeyboardArrowDown } from "react-icons/md";
 
 const RepCard = ({exercise, moveElementUp, moveElementDown, clicked, setCurrentElement, workoutData, setWorkoutData} : 
@@ -14,6 +14,13 @@ setWorkoutData: (data: {
     weight: number;
 }[]) => void }) => 
 {
+
+  useEffect(() => {
+    // setting up default state for rep data
+    if (workoutData.length === 0)
+      setWorkoutData([{reps: 8, weight: 100}]);
+  })
+
   const handleChange = (e, value: string, field : string, index : number) => {
     // is a deep copy necessary?
     const newVal = Number(value.split(" ")[0]);
