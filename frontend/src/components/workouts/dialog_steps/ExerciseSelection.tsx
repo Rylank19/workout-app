@@ -1,26 +1,40 @@
-import React from 'react'
+import MiniExerciseCard from '@/components/exercises/ExerciseMiniCard';
+import { Exercise } from '@/store/exercise';
+import { Workout } from '@/store/workout';
+import { CheckboxGroup, SimpleGrid } from '@chakra-ui/react';
+import React from 'react';
 
-const ExerciseSelection = () => {
+interface NumberEntries {
+  id: string;
+  value: number
+}
+
+interface ExerciseSelectionProps {
+  exercises: Exercise[]
+  exerciseNumbering: NumberEntries[]
+  setExerciseNumbering: React.Dispatch<React.SetStateAction<NumberEntries[]>>
+  workoutData: Workout
+  setWorkoutData: React.Dispatch<React.SetStateAction<Workout>>
+}
+
+const ExerciseSelection : React.FC<ExerciseSelectionProps> = ({exercises, exerciseNumbering, setExerciseNumbering, workoutData, setWorkoutData}) => {
   const handleValueChange = (selected: string[]) => {
     const currentSet = new Set(selected);      
 
-    if (selected.length < selectedExercises.current.length) {// element was removed
-      const difference_array = selectedExercises.current.filter(x => !selected.includes(x)); // get the element that is different
-      console.log(selected)
-      console.log(selectedExercises.current)
+    if (selected.length < exerciseNumbering.length) {// element was removed
+      const difference_array = exerciseNumbering.filter(x => !selected.includes(x.id)); // get the element that is different
 
-      let difference = "";
+      let difference : numberEntries;
       if (difference_array.length != 1)
         console.log("Why did this happen?")
       else
         difference = difference_array[0];
 
       // get the number associated with the element removed
-      const num_removed = exerciseStates.find(e => e.id === difference)!.value
+      const num_removed = exerciseNumbering.find(e => e.id === difference.id)!.value
 
-      nextNumberRef.current--;
-      if (num_removed != nextNumberRef.current) { // we gotta change the numbers so there are no gaps
-        exerciseStates.forEach(e => {
+      if (num_removed != exerciseNumbering.length) { // we gotta change the numbers so there are no gaps
+        exerciseNumbering.forEach(e => {
           if (e.value > num_removed) {
             e.value = e.value - 1;
           }
@@ -29,29 +43,28 @@ const ExerciseSelection = () => {
     }
 
     // Remove deselected
-    const updated = exerciseStates.filter(e => currentSet.has(e.id));
-
+    const updated = exerciseNumbering.filter(e => currentSet.has(e.id));
 
     // Add newly selected (preserving order)
     selected.forEach(id => {
       if (!updated.find(e => e.id === id)) {
-        updated.push({ id, value: nextNumberRef.current++ });
+        const len = exerciseNumbering.length + 1;
+        updated.push({ id, value: len });
       }
     });
 
-    selectedExercises.current = selected;
-    setExerciseStates(updated);
+    setExerciseNumbering(updated);
     setWorkoutData(prev => {
       const exercises = updated.map(entry => {
         return {exerciseId: entry.id, setData: [{reps: 8, weight: 0}]}
       })
-
+      
       const newExercises = []
       for (let i = 0; i < exercises.length; i++) {
         if (!workoutData.exercises.find(e => e.exerciseId === exercises[i].exerciseId))
           newExercises.push(exercises[i])
       }
-
+      
       console.log("New Exercises")
       console.log(newExercises)
       return {
@@ -64,20 +77,14 @@ const ExerciseSelection = () => {
     })
   }
 
-  const numberMap = useMemo(() => {
-    const map = new Map<string, number>();
-    exerciseStates.forEach(({id, value}) => map.set(id,value));
-    return map;
-  }, [exerciseStates]);
-
   return (
-    <CheckboxGroup value={selectedExercises.current} onValueChange={handleValueChange}>
+    <CheckboxGroup value={exerciseNumbering.map(e => e.id)} onValueChange={handleValueChange}>
       <SimpleGrid gap={4}>
         {exercises.map( exercise => (
           <MiniExerciseCard
             key={exercise._id}
             exercise={exercise}
-            number={numberMap.get(exercise._id) ?? -1}
+            number={exerciseNumbering.find(e => e.id === exercise._id)?.value ?? -1}
           />
         ))}
       </SimpleGrid>
