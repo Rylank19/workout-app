@@ -1,4 +1,4 @@
-import { Card, HStack, IconButton, Link, LinkOverlay } from "@chakra-ui/react"
+import { Card, HStack, IconButton, Link as ChakraLink, LinkOverlay } from "@chakra-ui/react"
 import { AiTwotoneDelete } from 'react-icons/ai'
 import { FaEdit } from 'react-icons/fa'
 import { FaPlay } from "react-icons/fa6";
@@ -6,17 +6,21 @@ import WorkoutDays from "./WorkoutDays"
 import dialog from '@/components/plans/PlanDialogue'
 import { useCallback, useEffect, useState } from "react"
 import Content from "./PlanDialogueContent"
+import {Link as ReactRouterLink} from 'react-router-dom'
+import { useUserStore } from "@/store/user";
 
 export interface WorkoutEntry {
   workoutTitle: string,
+  workoutId: string,
   workoutDays: number,
 }
 
 const PlanCard = ({cardName} : {cardName : string}) => {
   // need state for the workout data (days of workout and type of workout)
-  const [planData, setPlanData] = useState<WorkoutEntry[]>([{workoutTitle:"Squat Day", workoutDays:7}, {workoutTitle:"Deadlift Day", workoutDays:56}]);
+  const [planData, setPlanData] = useState<WorkoutEntry[]>([{workoutTitle:"Squat Day", workoutId:"684735917b1aa9063f71b05a", workoutDays:7}, {workoutTitle:"Deadlift Day", workoutId:"686bda5bf2d1b4dfaa1dddda", workoutDays:56}]);
   const [isOpen, setIsOpen] = useState(false);
   const start = 0b1;
+  const {currentDay} = useUserStore();
 
   const handleUpdatePlanData = (workoutTitle, day) => {
     setPlanData(prev => {
@@ -69,18 +73,20 @@ const PlanCard = ({cardName} : {cardName : string}) => {
         </Card.Description>
       </Card.Body>
       <LinkOverlay asChild>
-        <Link onClick={() => {
+        <ChakraLink onClick={() => {
           setIsOpen(true);
           dialog.open("a", {
             title: "Workout Creation",
             content: <Content planData={planData} handleUpdatePlanData={(workout, days) => handleUpdatePlanData(workout, days)}/>,
             handleOpenChange: handleOpenChange
           })}
-        }></Link>
+        }></ChakraLink>
       </LinkOverlay>
       <Card.Footer justifyContent={"flex-end"}>
         <HStack justify={"space-between"} w="full">
-          <IconButton colorPalette={"green"}><FaPlay /></IconButton>
+          <ChakraLink unstyled asChild variant={"plain"}>
+            <ReactRouterLink to={`/activeworkout/${planData[currentDay].workoutId}`}><IconButton colorPalette={"green"}><FaPlay /></IconButton></ReactRouterLink>
+          </ChakraLink>
           <HStack>
             <IconButton colorPalette={"blue"}><FaEdit /></IconButton>
             <IconButton colorPalette={"red"}><AiTwotoneDelete /></IconButton>
