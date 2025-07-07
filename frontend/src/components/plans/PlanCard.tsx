@@ -1,6 +1,7 @@
-import { Card, IconButton, Link, LinkOverlay } from "@chakra-ui/react"
+import { Card, HStack, IconButton, Link, LinkOverlay } from "@chakra-ui/react"
 import { AiTwotoneDelete } from 'react-icons/ai'
 import { FaEdit } from 'react-icons/fa'
+import { FaPlay } from "react-icons/fa6";
 import WorkoutDays from "./WorkoutDays"
 import dialog from '@/components/plans/PlanDialogue'
 import { useCallback, useEffect, useState } from "react"
@@ -78,8 +79,13 @@ const PlanCard = ({cardName} : {cardName : string}) => {
         }></Link>
       </LinkOverlay>
       <Card.Footer justifyContent={"flex-end"}>
-        <IconButton colorPalette={"blue"}><FaEdit /></IconButton>
-        <IconButton colorPalette={"red"}><AiTwotoneDelete /></IconButton>
+        <HStack justify={"space-between"} w="full">
+          <IconButton colorPalette={"green"}><FaPlay /></IconButton>
+          <HStack>
+            <IconButton colorPalette={"blue"}><FaEdit /></IconButton>
+            <IconButton colorPalette={"red"}><AiTwotoneDelete /></IconButton>
+          </HStack>
+        </HStack>
       </Card.Footer>
     </Card.Root>
     <dialog.Viewport />
