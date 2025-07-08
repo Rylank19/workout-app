@@ -32,6 +32,7 @@ const WorkoutDialogStepContent = ({ exercises, workout, setNewWorkout }: {
   }
   
   const storeAndReset = () => {
+    console.log("Storing and resetting workout data:", workoutData);
     createWorkout(workoutData);
     dialog.close("a")
   }

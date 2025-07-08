@@ -17,7 +17,7 @@ export interface WorkoutEntry {
 
 const PlanCard = ({cardName} : {cardName : string}) => {
   // need state for the workout data (days of workout and type of workout)
-  const [planData, setPlanData] = useState<WorkoutEntry[]>([{workoutTitle:"Squat Day", workoutId:"684735917b1aa9063f71b05a", workoutDays:7}, {workoutTitle:"Deadlift Day", workoutId:"686bda5bf2d1b4dfaa1dddda", workoutDays:56}]);
+  const [planData, setPlanData] = useState<WorkoutEntry[]>([{workoutTitle:"Squat Day", workoutId:"686c42fac55236162eb95f97", workoutDays:7}, {workoutTitle:"Deadlift Day", workoutId:"686c42fac55236162eb95f97", workoutDays:56}]);
   const [isOpen, setIsOpen] = useState(false);
   const start = 0b1;
   const {currentDay} = useUserStore();

@@ -13,7 +13,7 @@ const ReviewWorkout : React.FC<Props> = ({exercises, workoutData}) => {
   return (
     <VStack gap={4}>
       {workoutData.exercises.map(exercise => {
-        return <ExerciseReviewCard setsData={exercise.setData} exercise={exercises.find(e => e._id === exercise.exerciseId)} />
+        return <ExerciseReviewCard setsData={exercise.set_data} exercise={exercises.find(e => e._id === exercise.exerciseId)} />
       })}
     </VStack>
   )

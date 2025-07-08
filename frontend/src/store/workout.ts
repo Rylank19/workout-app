@@ -8,7 +8,7 @@ export interface Workout {
     name: string;
     exercises: {
         exerciseId: string,
-        setData: {
+        set_data: {
             reps: number,
             weight: number,
         }[]

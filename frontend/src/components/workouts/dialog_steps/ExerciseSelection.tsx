@@ -56,7 +56,7 @@ const ExerciseSelection : React.FC<ExerciseSelectionProps> = ({exercises, exerci
     setExerciseNumbering(updated);
     setWorkoutData(prev => {
       const exercises = updated.map(entry => {
-        return {exerciseId: entry.id, setData: [{reps: 8, weight: 0}]}
+        return {exerciseId: entry.id, set_data: [{reps: 8, weight: 0}]}
       })
       
       const newExercises = []

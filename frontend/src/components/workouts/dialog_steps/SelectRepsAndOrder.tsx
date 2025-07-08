@@ -60,7 +60,7 @@ const SelectRepsAndOrder : React.FC<Props> = ({exercises, exerciseNumbering, set
       if (currentExerciseIndex === -1) {
         return {
           ...prev,
-          exercises: [...prev.exercises, {exerciseId: id, setData: data}]
+          exercises: [...prev.exercises, {exerciseId: id, set_data: data}]
         }
       }
       console.log("Updating " + currentExerciseIndex)
@@ -68,7 +68,7 @@ const SelectRepsAndOrder : React.FC<Props> = ({exercises, exerciseNumbering, set
       // update the currentWorkout
       const updatedExercise = {
         ...prev.exercises[currentExerciseIndex],
-        setData: data,
+        set_data: data,
       }
 
       const updatedExercises = [...prev.exercises];
@@ -86,14 +86,14 @@ const SelectRepsAndOrder : React.FC<Props> = ({exercises, exerciseNumbering, set
     <VStack gap={4}>
       {exerciseNumbering.map((id, index) => {
         const exercise = exercises.find(e => e._id === id.id);
-        let setData : {reps: number, weight: number}[] = [];
+        let set_data : {reps: number, weight: number}[] = [];
         if (exercise) {
           const exerciseData = workoutData.exercises.find(e => e.exerciseId == exercise._id)
-          setData = exerciseData?.setData ?? []
-          console.log(setData)
+          set_data = exerciseData?.set_data ?? []
+          console.log(set_data)
         }
 
-        return exercise ? <RepCard key={exercise._id} exercise={exercise} moveElementUp={() => moveElementUp(index)} moveElementDown={() => moveElementDown(index)} clicked={currentElement === index} setCurrentElement={() => setCurrentElement(index)} workoutData={setData} setWorkoutData={(data) => handleWorkoutSet(exercise._id, data)}/> : null;
+        return exercise ? <RepCard key={exercise._id} exercise={exercise} moveElementUp={() => moveElementUp(index)} moveElementDown={() => moveElementDown(index)} clicked={currentElement === index} setCurrentElement={() => setCurrentElement(index)} workoutData={set_data} setWorkoutData={(data) => handleWorkoutSet(exercise._id, data)}/> : null;
       })}
     </VStack>
   );

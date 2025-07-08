@@ -59,7 +59,10 @@ export const createWorkout = async (req, res) => {
         const user = await User.findById(userID)
         console.log("Found user")
         console.log(user)
-        user.workouts.push({name: workout.name, exercises: workout.exercises});
+        console.log("Got exercises")
+        console.log(workout.exercises)
+        const newWorkout = new Workout({name: workout.name, exercises: workout.exercises});
+        user.workouts.push(newWorkout);
         await user.save();
         res.status(201).json({success: true, data:user.workouts[user.workouts.length - 1]});
     } catch (error) {
