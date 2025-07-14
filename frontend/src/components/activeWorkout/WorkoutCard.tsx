@@ -3,15 +3,14 @@ import { Container, VStack, HStack, Text, For, CheckboxCard, Heading, Flex } fro
 import React, { useEffect, useState } from 'react'
 import { RxCross2 } from "react-icons/rx";
 
-const ExerciseCard = ({workout, select, setCount} : {workout : Workout | undefined, select : boolean, setCount : React.Dispatch<React.SetStateAction<number>>}) => {
+const WorkoutCard = ({workout, select, setCount} : {workout : Workout | undefined, select : boolean, setCount : React.Dispatch<React.SetStateAction<number>>}) => {
   if (workout === undefined) {
     return (<Text>Loading...</Text>)
   }
 
   return (
-    <Container w="100vw">
+    <Container>
       <VStack gap={4} padding={4}>
-        {console.log("ExerciseCard rendered with workout:", workout)}
         <For each={workout.exercises} fallback={<Text>No exercises found</Text>}>
           {(exercise) => (
             <SingleExerciseCard exercise={exercise} select={select} setCount={setCount} />
@@ -52,7 +51,7 @@ const SingleExerciseCard = ({exercise, select, setCount} : {exercise: Workout['e
             <Heading size="lg">{exercise.exerciseId}</Heading>
             <HStack>
               <Text>3</Text>
-              <Text>X</Text>
+              <Text>x</Text>
               <Text>10</Text>
               {/* <For each={exercise.set_data}>
               {(set) => (
@@ -70,4 +69,4 @@ const SingleExerciseCard = ({exercise, select, setCount} : {exercise: Workout['e
   )
 }
 
-export default ExerciseCard
+export default WorkoutCard
