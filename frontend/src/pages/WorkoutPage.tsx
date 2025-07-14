@@ -15,14 +15,14 @@ const defaultWorkouts : Workout[] = [
     name: "Squat Day",
     exercises: [{
         exerciseId: "681512c13253fc4402ba260e",
-        setData: []
+        set_data: []
     }]},
   {
     _id: "456",
     name: "Deadlift Day",
     exercises: [{
         exerciseId: "6814f3b78da85a4ddf28312e",
-        setData: []
+        set_data: []
     }]
   }
 ]

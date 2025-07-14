@@ -19,6 +19,29 @@ export const getWorkouts = async (req, res) => {
     }
 };
 
+export const getWorkout = async (req, res) => {
+    console.log(req.params);
+    const {userID, workoutId} = req.params; // user will send this data
+
+    if (!userID) {
+        return res.status(400).json({ success:false, message:"Please provide all fields"});
+    }
+
+    try {
+        const user = await User.findById(userID);
+
+        user.workouts.get(workoutId, (workout) => {
+            if (!workout) {
+                return res.status(404).json({success: false, message: "Workout not found"});
+            }
+            return res.status(200).json({success: true, data: workout});
+        });
+    } catch (error) {
+        console.log("error in fetching user:", error.message);
+        res.status(500).json({success: false, message:"Server Error"});
+    }
+};
+
 export const createWorkout = async (req, res) => {
     const workout = req.body; // user will send this data
     const {userID} = req.params; // userID in url parameter
@@ -36,7 +59,10 @@ export const createWorkout = async (req, res) => {
         const user = await User.findById(userID)
         console.log("Found user")
         console.log(user)
-        user.workouts.push({name: workout.name, exercises: workout.exercises});
+        console.log("Got exercises")
+        console.log(workout.exercises)
+        const newWorkout = new Workout({name: workout.name, exercises: workout.exercises});
+        user.workouts.push(newWorkout);
         await user.save();
         res.status(201).json({success: true, data:user.workouts[user.workouts.length - 1]});
     } catch (error) {

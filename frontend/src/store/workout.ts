@@ -8,7 +8,7 @@ export interface Workout {
     name: string;
     exercises: {
         exerciseId: string,
-        setData: {
+        set_data: {
             reps: number,
             weight: number,
         }[]
@@ -22,9 +22,11 @@ interface Response {
 
 interface MyState {
     workouts : Workout[],
+    currentWorkout?: Workout,
     // setExercises: (exercises: []) => void,
     createWorkout: (newExercise: Workout) => Promise<Response>,
     fetchWorkouts: (uid: string) => Promise<void>,
+    fetchWorkout: (uid: string, workoutId: string) => Promise<void>,
     // deleteExercise: (uid: string, eid: string) => Promise<Response>,
     // updateExercise: (updatedExercise : Exercise, eid: string) => Promise<Response>
 }
@@ -38,6 +40,14 @@ export const useWorkoutStore = create<MyState>((set) => ({
         });
         const data = await res.json();
         set({ workouts: data.data});
+    },
+    fetchWorkout: async (workoutId: string) => {
+        const userID = useUserStore.getState().userID
+        const res = await fetch(`/api/user/${userID}/workouts/${workoutId}`, {
+            method: "GET",
+        });
+        const data = await res.json();
+        return data.data; // returns the workout data
     },
     createWorkout: async (newWorkout) => {
         if (!newWorkout.name || !newWorkout.exercises || newWorkout.exercises.length == 0) {
