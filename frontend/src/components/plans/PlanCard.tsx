@@ -85,7 +85,7 @@ const PlanCard = ({cardName} : {cardName : string}) => {
       <Card.Footer justifyContent={"flex-end"}>
         <HStack justify={"space-between"} w="full">
           <ChakraLink unstyled asChild variant={"plain"}>
-            <ReactRouterLink to={`/activeworkout/${planData[currentDay].workoutId}`}><IconButton colorPalette={"green"}><FaPlay /></IconButton></ReactRouterLink>
+            <ReactRouterLink to={`/activeworkout/${planData[0].workoutId}`}><IconButton colorPalette={"green"}><FaPlay /></IconButton></ReactRouterLink>
           </ChakraLink>
           <HStack>
             <IconButton colorPalette={"blue"}><FaEdit /></IconButton>

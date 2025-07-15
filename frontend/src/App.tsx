@@ -8,6 +8,7 @@ import CalendarPage from './pages/CalendarPage';
 import BackgroundImage from '@/assets/Contour Line.svg'
 import ActiveWorkout from './pages/ActiveWorkout';
 import { useState } from 'react';
+import { Toaster } from "@/components/ui/toaster"
 
 function App() {
   const [showNav, setShowNav] = useState(true); // Placeholder for show state, replace with actual state management
@@ -25,6 +26,7 @@ function App() {
           <Route path="/activeworkout/:workoutId" element={<ActiveWorkout funcNav={setShowNav} />} />
         </Route>
       </Routes>
+      <Toaster />
     </Box>
   )
 }
