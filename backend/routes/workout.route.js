@@ -7,7 +7,7 @@ const router = express.Router({mergeParams: true});
 // Now we're going to 'listen' for a request for the home page (we post because we want to create)
 router.post("/", createWorkout);
 
-router.delete("/:id", deleteWorkout);
+router.delete("/:workoutId", deleteWorkout);
 
 router.get("/", getWorkouts)
 

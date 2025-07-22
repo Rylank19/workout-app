@@ -1,9 +1,9 @@
 import ExerciseCard from '@/components/exercises/ExerciseCard'
-import { Toaster, toaster } from '@/components/ui/toaster'
+import { Toaster } from '@/components/ui/toaster'
 import { useExerciseStore } from '@/store/exercise'
 import { useUserStore } from '@/store/user'
 import { Container, Flex, Text, Button, Float } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import ExerciseDialogButton from '@/components/exercises/ExerciseDialogButton'
 
 const ExercisesPage = () => {

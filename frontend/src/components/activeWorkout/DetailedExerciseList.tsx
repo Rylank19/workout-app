@@ -16,7 +16,7 @@ interface WorkoutExerciseData {
 
 const DetailedExerciseList = ({exercises, workout, handleClick} : {exercises : Exercise[], workout : Workout | undefined, handleClick : () => void}) => {
   const exerciseIds = workout?.exercises.map(exercise => exercise.exerciseId)
-  const exerciseNames = exercises.filter(exercise => exerciseIds?.includes(exercise._id)).map(exercise => exercise.name)
+  const exerciseNames = exercises.filter(exercise => exerciseIds?.includes(exercise._id ?? "")).map(exercise => exercise.name)
 
   const startingExercises = workout?.exercises.map(ex => ({exerciseId : ex.exerciseId, set_data : ex.set_data})) ?? [];
 

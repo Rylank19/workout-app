@@ -46,7 +46,7 @@ export const createExercise = async (req, res) => {
 };
 
 export const deleteExercise = async (req, res) => {
-    const {id} = req.params;
+    const {exerciseID} = req.params;
 
     const user = req.body;
     

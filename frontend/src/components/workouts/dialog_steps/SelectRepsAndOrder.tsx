@@ -96,7 +96,7 @@ const SelectRepsAndOrder : React.FC<Props> = ({exercises, exerciseNumbering, set
           console.log(set_data)
         }
 
-        return exercise ? <RepCard key={exercise._id} exercise={exercise} moveElementUp={() => moveElementUp(index)} moveElementDown={() => moveElementDown(index)} clicked={currentElement === index} setCurrentElement={() => setCurrentElement(index)} workoutData={set_data} setWorkoutData={(data) => handleWorkoutSet(exercise._id, data)}/> : null;
+        return exercise ? <RepCard key={exercise._id} exercise={exercise} moveElementUp={() => moveElementUp(index)} moveElementDown={() => moveElementDown(index)} clicked={currentElement === index} setCurrentElement={() => setCurrentElement(index)} workoutData={set_data} setWorkoutData={(data) => handleWorkoutSet(exercise._id ?? "", data)}/> : null;
       })}
     </VStack>
   );

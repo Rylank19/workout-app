@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 
 const __dirname = path.resolve();
 
+
 app.use(express.json());
 
 app.use("/api/user/", userRoutes)
@@ -21,9 +22,9 @@ app.use("/api/user/:userID/exercises/", exerciseRoutes)
 app.use("/api/user/:userID/workouts/", workoutRoutes)
 
 if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "/frontend/dist")));
-
-    app.get("*", (req, res) => {
+    app.use(express.static(path.join(__dirname, "./frontend/dist")));
+    
+    app.get("/{*any}", (req, res) => {
         res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
     })
 }
