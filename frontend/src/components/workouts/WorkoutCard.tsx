@@ -53,8 +53,7 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
           dialog.open("a", {
             title: "Workout Creation",
             content: () => (<WorkoutDialogStepContent 
-            exercises={exercises}
-            workout={workout}/>),
+            exercises={exercises}/>),
             handleOpenChange: () => {
               createWorkout(workout)
               dialog.close("a");
