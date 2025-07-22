@@ -1,11 +1,12 @@
 import {create} from "zustand"
+import { useUserStore } from "./user";
 
 // this file essentially connects to our backend methods to manipulate data on the server
 
 export interface Exercise {
     name: string;
     muscleGroup: string;
-    _id: string;
+    _id?: string;
 }
 
 interface Response {
@@ -16,20 +17,21 @@ interface Response {
 interface MyState {
     exercises : Exercise[],
     setExercises: (exercises: []) => void,
-    createExercise: (newExercise: {userID: string, name: string; muscleGroup: string}) => Promise<Response>,
+    createExercise: (newExercise: Exercise) => Promise<Response>,
     fetchExercises: (uid: string) => Promise<void>,
     deleteExercise: (uid: string, eid: string) => Promise<Response>,
-    // updateExercise: (updatedExercise : Exercise, eid: string) => Promise<Response>
+    updateExercise: (updatedExercise : Exercise) => Promise<Response>
 }
 
 export const useExerciseStore = create<MyState>((set) => ({
     exercises: [],
     setExercises: (exercises: []) => set({ exercises }),
     createExercise: async (newExercise) => {
-        if (!newExercise.userID || !newExercise.name || !newExercise.muscleGroup) {
+        const uid = useUserStore.getState().userID;
+        if (!newExercise.name || !newExercise.muscleGroup) {
             return {success:false, message:"Please fill in all fields."}
         }
-        const res = await fetch("/api/user/:uid/exercises", {
+        const res = await fetch(`/api/user/${uid}/exercises`, {
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
@@ -63,17 +65,18 @@ export const useExerciseStore = create<MyState>((set) => ({
         set((state) => ({exercises: state.exercises.filter(exercises => exercises._id !== eid)}));
         return { success: true, message: data.message};
     },
-    // updateProduct: async (updatedProduct, pid) => {
-    //     const res = await fetch(`/api/products/${pid}`, {
-    //         method: "PUT",
-    //         headers: {
-    //             "Content-Type":"application/json"
-    //         },
-    //         body:JSON.stringify(updatedProduct)
-    //     });
-    //     const data = await res.json();
-    //     if(!data.success) return { success: false, message: data.message};
-    //     set((state) => ({products:state.products.map(product => product._id === pid ? data.data : product)}));
-    //     return {success: true, message: "Product updated successfully"};
-    // }
+    updateExercise: async (updatedExercise) => {
+        const uid = useUserStore.getState().userID;
+        const res = await fetch(`/api/user/${uid}/exercises/${updatedExercise._id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(updatedExercise)
+        });
+        const data = await res.json();
+        if(!data.success) return { success: false, message: data.message};
+        set((state) => ({exercises:state.exercises.map(exercise => exercise._id === updatedExercise._id ? data.data : exercise)}));
+        return {success: true, message: "Exercise updated successfully"};
+    }
 })) // this is a callback ( the brackets mean we are returning an object)

@@ -1,5 +1,5 @@
 import express from "express";
-import { createExercise, deleteExercise, getExercises } from "../controllers/exercise.controller.js"
+import { createExercise, deleteExercise, getExercises, updateExercise } from "../controllers/exercise.controller.js"
 
 const router = express.Router({mergeParams: true});
 
@@ -10,5 +10,7 @@ router.post("/", createExercise);
 router.delete("/:id", deleteExercise);
 
 router.get("/", getExercises)
+
+router.put("/:exerciseID", updateExercise);
 
 export default router;

@@ -1,4 +1,3 @@
-import Exercise from '../models/exercise.model.js';
 import mongoose from "mongoose";
 import User from '../models/user.model.js';
 
@@ -20,19 +19,21 @@ export const getExercises = async (req, res) => {
 };
 
 export const createExercise = async (req, res) => {
+    const {userID} = req.params;
+
     const exercise = req.body; // user will send this data
     console.log(exercise)
 
-    if (!exercise.userID || !exercise.name || !exercise.muscleGroup) {
+    if (!exercise.name || !exercise.muscleGroup) {
         return res.status(400).json({ success:false, message:"Please provide all fields"});
     }
 
-    if (!mongoose.Types.ObjectId.isValid(exercise.userID)) {
+    if (!mongoose.Types.ObjectId.isValid(userID)) {
         return res.status(404).json({success: false, message: "Invalid user Id"});
     }
 
     try {
-        const user = await User.findById(exercise.userID)
+        const user = await User.findById(userID)
         console.log("Found user")
         console.log(user)
         user.custom_exercises.push({name: exercise.name, muscleGroup: exercise.muscleGroup});
@@ -65,3 +66,37 @@ export const deleteExercise = async (req, res) => {
         res.status(500).json({success: false, message: "Server Error"});
     }
 };
+
+export const updateExercise = async (req, res) => {
+    const { userID, exerciseID } = req.params;
+
+    const exercise = req.body;
+
+    console.log(exerciseID);
+
+    if (!mongoose.Types.ObjectId.isValid(exerciseID)) {
+        return res.status(404).json({success: false, message: "Invalid Exercise Id"});
+    }
+
+    console.log(exercise.name, exercise.muscleGroup)
+
+    try {
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: userID, 'custom_exercises._id': exerciseID},
+            {
+                $set: {
+                    'custom_exercises.$.name' : exercise.name,
+                    'custom_exercises.$.muscleGroup': exercise.muscleGroup
+                }
+            },
+            { new: true}
+        );
+
+        const updatedExercise = updatedUser?.custom_exercises.find(
+            (ex) => ex._id.toString() === exerciseID
+        );
+        res.status(200).json({ success: true, data: updatedExercise});
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error"});
+    }
+}
