@@ -1,6 +1,6 @@
 import { Exercise } from '@/store/exercise';
 import { Workout } from '@/store/workout';
-import { Text, Button, Center, CloseButton, Dialog, Steps} from '@chakra-ui/react';
+import { Button, Center, CloseButton, Dialog, Steps} from '@chakra-ui/react';
 import { useEffect, useState } from 'react'
 import { useWorkoutStore } from '@/store/workout';
 import { dialog } from './WorkoutDialog';
@@ -8,14 +8,16 @@ import ExerciseSelection from './dialog_steps/ExerciseSelection';
 import SelectRepsAndOrder from './dialog_steps/SelectRepsAndOrder';
 import ReviewWorkout from './dialog_steps/ReviewWorkout';
 
-const WorkoutDialogStepContent = ({ exercises, workout, setNewWorkout }: {
+const WorkoutDialogStepContent = ({ exercises }: {
   exercises: Exercise[];
-  workout: Workout;
-  setNewWorkout: React.Dispatch<React.SetStateAction<Workout>>;
 }) => {
   const [step, setStep] = useState(0)
   const {createWorkout} = useWorkoutStore();
-  const [workoutData, setWorkoutData] = useState<Workout>(workout);
+  const [workoutData, setWorkoutData] = useState<Workout>({
+    name: "",
+    _id: "",
+    exercises: [],
+  });
 
   const incrementStep = () => {
     if (step + 1 > 3)

@@ -1,20 +1,18 @@
 import { useWorkoutStore, Workout } from '@/store/workout.ts'
 import { useUserStore } from '@/store/user.ts';
 import { Toaster, toaster } from '../ui/toaster.tsx';
-import { Card, CheckboxGroup, IconButton, Image, Link, LinkOverlay, SimpleGrid, Text, VStack } from '@chakra-ui/react';
+import { Card, IconButton, Image, Link, LinkOverlay } from '@chakra-ui/react';
 import { AiTwotoneDelete } from 'react-icons/ai';
-import MiniExerciseCard from '../exercises/ExerciseMiniCard.tsx';
 import { Exercise } from '@/store/exercise.ts';
 import { dialog } from '@/components/workouts/WorkoutDialog.tsx'
-import { useCallback, useEffect, useRef, useState } from 'react';
-import RepCard from '@/components/workouts/RepCard.tsx';
 import WorkoutDialogStepContent from './WorkoutDialogStepContent.tsx';
 
-const WorkoutCard = ({workout, exercises, setNewWorkout} : {workout : Workout, exercises: Exercise[], setNewWorkout: React.Dispatch<React.SetStateAction<Workout>>}) => {
+const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exercise[]}) => {
   const {createWorkout} = useWorkoutStore();
   const {userID} = useUserStore();
   const handleDeleteWorkout = async (uid: string, wid : string) => {
     // const {success, message} = await deleteWorkout(uid, eid);
+    console.log(uid, wid);
     const success = true;
     const message = "Hello"
     if (!success) {
@@ -56,8 +54,7 @@ const WorkoutCard = ({workout, exercises, setNewWorkout} : {workout : Workout, e
             title: "Workout Creation",
             content: () => (<WorkoutDialogStepContent 
             exercises={exercises}
-            workout={workout}
-            setNewWorkout={setNewWorkout}/>),
+            workout={workout}/>),
             handleOpenChange: () => {
               createWorkout(workout)
               dialog.close("a");

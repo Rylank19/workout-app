@@ -1,5 +1,5 @@
-import { Button, Center, CloseButton, Dialog, Link, LinkOverlay, Portal, SimpleGrid, Steps, createOverlay } from "@chakra-ui/react"
-import { JSX, useMemo, useState } from "react"
+import { Dialog, Portal, createOverlay } from "@chakra-ui/react"
+import { JSX } from "react"
 
 export interface DialogProps {
   title?: string

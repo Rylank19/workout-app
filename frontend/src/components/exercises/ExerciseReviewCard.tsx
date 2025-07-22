@@ -1,5 +1,4 @@
 import { Card, Tag, Text, HStack } from '@chakra-ui/react'
-import React from 'react'
 import { Exercise } from '@/store/exercise'
 
 const ExerciseReviewCard = ({setsData, exercise} :
@@ -8,8 +7,10 @@ const ExerciseReviewCard = ({setsData, exercise} :
     reps: number,
     weight: number,
   }[],
-  exercise: Exercise,
+  exercise: Exercise | undefined,
 }) => {
+  if (exercise === undefined) return <Text>Missing exercise...</Text>
+
   return (
     <Card.Root w="full">
       <Card.Header>

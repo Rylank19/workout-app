@@ -24,7 +24,7 @@ const ExerciseSelection : React.FC<ExerciseSelectionProps> = ({exercises, exerci
     if (selected.length < exerciseNumbering.length) {// element was removed
       const difference_array = exerciseNumbering.filter(x => !selected.includes(x.id)); // get the element that is different
 
-      let difference : numberEntries;
+      let difference : NumberEntries;
       if (difference_array.length != 1)
         console.log("Why did this happen?")
       else

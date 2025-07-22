@@ -20,7 +20,7 @@ interface Props {
 const SelectRepsAndOrder : React.FC<Props> = ({exercises, exerciseNumbering, setExerciseNumbering, workoutData, setWorkoutData}) => {
 
   const [currentElement, setCurrentElement] = useState<number>(-1); // -1 indicates no element selected
-  const moveElementUp = (index) => {
+  const moveElementUp = (index : number) => {
     // TODO: Is there a better way of swapping elements in state than making a complete copy? maybe something with a memoization structure?
     const reordered_exercise = exerciseNumbering[index]; // this is the exercise that needs moved up
 
@@ -36,7 +36,7 @@ const SelectRepsAndOrder : React.FC<Props> = ({exercises, exerciseNumbering, set
     setExerciseNumbering(states) // set the new state
   }
 
-  const moveElementDown = (index) => {
+  const moveElementDown = (index : number) => {
     // TODO: Is there a better way of swapping elements in state than making a complete copy? maybe something with a memoization structure?
     const reordered_exercise = exerciseNumbering[index]; // this is the exercise that needs moved up
 
@@ -53,7 +53,10 @@ const SelectRepsAndOrder : React.FC<Props> = ({exercises, exerciseNumbering, set
     setExerciseNumbering(states) // set the new state
   }
 
-  const handleWorkoutSet = (id, data) => {
+  const handleWorkoutSet = (id : string, data : {
+    reps: number;
+    weight: number;
+}[]) => {
     console.log("Called it")
     setWorkoutData(prev => {
       const currentExerciseIndex = prev.exercises.findIndex(e => e.exerciseId === id);

@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Box, CloseButton, Container, Flex, Button, Center, ActionBar, Portal, Text } from '@chakra-ui/react'
-import { useWorkoutStore, Workout } from '@/store/workout';
+import { useWorkoutStore } from '@/store/workout';
 import { useUserStore } from '@/store/user';
 import WorkoutList from '@/components/activeWorkout/WorkoutList';
 import DetailedExerciseList from '@/components/activeWorkout/DetailedExerciseList';
@@ -27,7 +26,7 @@ const ActiveWorkout = ({funcNav} : {funcNav: React.Dispatch<React.SetStateAction
     funcNav(false); // remove navbar
     workoutStore.fetchWorkouts(userID); // Fetch all workouts for the user
     exerciseStore.fetchExercises(userID); // fetch all exercises for the user
-  }, []);
+  }, [exerciseStore, funcNav, userID, workoutStore]);
   
   const workout = workoutStore.workouts.find(w => w._id === workoutId);
 

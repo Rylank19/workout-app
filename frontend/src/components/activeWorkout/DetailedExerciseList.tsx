@@ -1,40 +1,37 @@
-import React, { useState } from 'react'
-import { NumberInput, Card, HStack, Text, For, Container, Flex, VStack, Separator, CloseButton, Box, Button, Center } from '@chakra-ui/react'
+import { useState } from 'react'
+import { NumberInput, Card, HStack, Text, For, Container, Flex, VStack, Separator, CloseButton, Button, Center } from '@chakra-ui/react'
 import { toaster } from "@/components/ui/toaster"
-import { FaLayerGroup } from 'react-icons/fa6'
 import { Workout } from '@/store/workout'
 import { Exercise } from '@/store/exercise'
-import ExercisesPage from '@/pages/ExercisesPage'
-import { identity } from '@fullcalendar/core/internal.js'
 
-interface Set {
-  reps: number,
-  weight: number,
+interface WorkoutSet {
+  reps: number;
+  weight: number;
 }
 
 interface WorkoutExerciseData {
-  exerciseId: string,
-  set_data: Set[]
-}
-
-interface SpotInWorkout {
-  exerciseIndex : number,
-  setIndex: number
+  exerciseId: string;
+  set_data: WorkoutSet[];
 }
 
 const DetailedExerciseList = ({exercises, workout, handleClick} : {exercises : Exercise[], workout : Workout | undefined, handleClick : () => void}) => {
-  const exerciseIds = workout.exercises.map(exercise => exercise.exerciseId)
-  const exerciseNames = exercises.filter(exercise => exerciseIds.includes(exercise._id)).map(exercise => exercise.name)
+  const exerciseIds = workout?.exercises.map(exercise => exercise.exerciseId)
+  const exerciseNames = exercises.filter(exercise => exerciseIds?.includes(exercise._id)).map(exercise => exercise.name)
 
-  const startingExercises = workout?.exercises.map(ex => ({exerciseId : ex.exerciseId, set_data : ex.set_data}));
+  const startingExercises = workout?.exercises.map(ex => ({exerciseId : ex.exerciseId, set_data : ex.set_data})) ?? [];
 
   const [currentExercise, setCurrentExercise] = useState(0)
   const [currentSets, setCurrentSets] = useState(Array(exerciseNames.length).fill(0));
-
-
   const [workoutSets, setWorkoutSets] = useState<WorkoutExerciseData[]>(startingExercises);
 
-  const sets = workoutSets.find((exercise) => exercise.exerciseId === exerciseIds[currentExercise])
+
+  if (workout === undefined || exerciseIds === undefined) return <Text>No workout loaded...</Text>
+
+  let sets: WorkoutExerciseData | undefined = workoutSets.find((exercise) => exercise.exerciseId === exerciseIds[currentExercise]);
+
+  if (sets === undefined) return <Text>No sets for current workout found... making one now</Text>
+
+  sets = {exerciseId: exerciseIds[currentExercise], set_data: [{reps: 0, weight: 0}]};
 
   const completeWorkout = () => {
     toaster.create({
@@ -76,9 +73,10 @@ const DetailedExerciseList = ({exercises, workout, handleClick} : {exercises : E
 
   // this function takes a given set number and identifier and adds it to current workout
   const handleChange = (type : string, value : number, setNumber : number) => {
-    console.log("Running")
+    if (exerciseIds === undefined) return;
 
     const exerciseId = exerciseIds[currentExercise];
+
     setWorkoutSets(prevWorkout => {
       const updatedSets = prevWorkout.map((entry) => {
         if (entry.exerciseId === exerciseId) { // changing the exercise that has a new set value
@@ -101,7 +99,7 @@ const DetailedExerciseList = ({exercises, workout, handleClick} : {exercises : E
     })
   }
 
-  const variant = (logged) => {
+  const variant = (logged : boolean) => {
     if (logged) {
       return {
         border:"green",
@@ -121,8 +119,6 @@ const DetailedExerciseList = ({exercises, workout, handleClick} : {exercises : E
     }
   }
 
-  if (workout === undefined) return <Text>No workout loaded...</Text>
-
   return (
     <>
       <Container h={"100vh"} w={"100vw"} justifyContent={"space-between"}>
@@ -137,7 +133,7 @@ const DetailedExerciseList = ({exercises, workout, handleClick} : {exercises : E
                 <Button variant="solid" colorPalette={"green"} marginBottom={"4"} onClick={completeWorkout}>Finish</Button>
               </Flex>
               <VStack>
-                
+
                 <For each={sets?.set_data}>
                   {(item, index) => (<SingleSet value={item} setNumber={index} currentSet={currentSets[currentExercise]} handleChange={handleChange} variant={variant}/>)}
                 </For>
@@ -158,7 +154,7 @@ const DetailedExerciseList = ({exercises, workout, handleClick} : {exercises : E
 
 }
 
-const SingleSet = ({value, setNumber, currentSet, handleChange, variant} : {value : Set, setNumber : number, currentSet : number, handleChange: (type: string, value: number, setNumber: number) => void
+const SingleSet = ({value, setNumber, currentSet, handleChange, variant} : {value : WorkoutSet, setNumber : number, currentSet : number, handleChange: (type: string, value: number, setNumber: number) => void
   variant: (logged: boolean) => {
     border: string;
     borderStyle: string;

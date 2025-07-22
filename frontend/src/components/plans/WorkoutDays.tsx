@@ -1,5 +1,4 @@
-import React, { use } from 'react'
-import { Box, Center, Flex, For, HStack, Text, Timeline, VStack } from "@chakra-ui/react"
+import { Box, For, HStack, Text, VStack } from "@chakra-ui/react"
 import { WorkoutEntry } from './PlanCard'
 import { useUserStore } from '@/store/user';
 

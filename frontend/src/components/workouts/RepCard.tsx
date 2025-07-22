@@ -1,6 +1,6 @@
 import { Exercise } from "@/store/exercise";
 import { Button, Card, Field, HStack, NumberInput, VStack, Text, Center, IconButton } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { MdOutlineKeyboardArrowUp, MdOutlineKeyboardArrowDown } from "react-icons/md";
 
 const RepCard = ({exercise, moveElementUp, moveElementDown, clicked, setCurrentElement, workoutData, setWorkoutData} : 
@@ -21,7 +21,7 @@ setWorkoutData: (data: {
       setWorkoutData([{reps: 8, weight: 100}]);
   })
 
-  const handleChange = (e, value: string, field : string, index : number) => {
+  const handleChange = (value: string, field : string, index : number) => {
     // is a deep copy necessary?
     const newVal = Number(value.split(" ")[0]);
     const array = [...workoutData]; // get the current stored values
@@ -39,12 +39,12 @@ setWorkoutData: (data: {
     setWorkoutData(newArray);
   }
 
-  const handleMoveUp = (e) => {
+  const handleMoveUp = (e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     moveElementUp();
   }
 
-  const handleMoveDown = (e) => {
+  const handleMoveDown = (e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     moveElementDown();
   }
@@ -79,7 +79,7 @@ setWorkoutData: (data: {
                       <Text>Reps</Text>
                     </Center>
                     <Field.Root>
-                      <NumberInput.Root value={weight.reps.toString()} min={0} onValueChange={(e) => handleChange(e, e.value, "reps", index)}>
+                      <NumberInput.Root value={weight.reps.toString()} min={0} onValueChange={(e) => handleChange(e.value, "reps", index)}>
                         <NumberInput.Control />
                         <NumberInput.Input colorPalette={"teal"} name="reps"/>
                       </NumberInput.Root>
@@ -90,7 +90,7 @@ setWorkoutData: (data: {
                       <Text>Weight</Text>
                     </Center>
                     <Field.Root>
-                      <NumberInput.Root value={weight.weight.toString()} formatOptions={{style: "unit", unit: "pound"}} min={0} onValueChange={(e) => handleChange(e, e.value, "weight", index)}>
+                      <NumberInput.Root value={weight.weight.toString()} formatOptions={{style: "unit", unit: "pound"}} min={0} onValueChange={(e) => handleChange(e.value, "weight", index)}>
                           <HStack>
                             <NumberInput.Control />
                             <NumberInput.Input colorPalette={"teal"} name="weight" />

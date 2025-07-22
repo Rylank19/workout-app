@@ -7,7 +7,6 @@ import dialog from '@/components/plans/PlanDialogue'
 import { useCallback, useEffect, useState } from "react"
 import Content from "./PlanDialogueContent"
 import {Link as ReactRouterLink} from 'react-router-dom'
-import { useUserStore } from "@/store/user";
 
 export interface WorkoutEntry {
   workoutTitle: string,
@@ -20,9 +19,8 @@ const PlanCard = ({cardName} : {cardName : string}) => {
   const [planData, setPlanData] = useState<WorkoutEntry[]>([{workoutTitle:"Squat Day", workoutId:"686c42fac55236162eb95f97", workoutDays:7}, {workoutTitle:"Deadlift Day", workoutId:"686c42fac55236162eb95f97", workoutDays:56}]);
   const [isOpen, setIsOpen] = useState(false);
   const start = 0b1;
-  const {currentDay} = useUserStore();
 
-  const handleUpdatePlanData = (workoutTitle, day) => {
+  const handleUpdatePlanData = (workoutTitle : string, day : number) => {
     setPlanData(prev => {
       
       
@@ -36,7 +34,7 @@ const PlanCard = ({cardName} : {cardName : string}) => {
           if (dayShifted & oldData[i].workoutDays && oldData[i].workoutTitle !== workoutTitle) // if there is crossover and the titles are not the same then flip the other day too
             oldData[i].workoutDays ^= dayShifted;
         }
-        newData = {workoutTitle: workoutTitle, workoutDays: oldData[indexToUpdate].workoutDays ^ dayShifted}; // use XOR to flip the specified bit
+        newData = {workoutTitle: workoutTitle, workoutId: oldData[indexToUpdate].workoutId, workoutDays: oldData[indexToUpdate].workoutDays ^ dayShifted}; // use XOR to flip the specified bit
 
         oldData[indexToUpdate] = newData; // update the index with the new data
         console.log(newData);

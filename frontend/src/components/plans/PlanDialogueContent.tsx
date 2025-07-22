@@ -1,7 +1,5 @@
 import { For, Flex, Text, Box, HStack } from "@chakra-ui/react";
 import { WorkoutEntry } from "./PlanCard";
-import TagComponent from "./TagComponent";
-import React from "react";
 import MemoizedTag from "./MemoizedTag";
 
 const Content = ({planData, handleUpdatePlanData} : {planData : WorkoutEntry[], handleUpdatePlanData : (workout: string, days: number) => void}) => {
@@ -9,7 +7,7 @@ const Content = ({planData, handleUpdatePlanData} : {planData : WorkoutEntry[], 
 
   return (
     <For each={planData}>
-      {(workouts, index1) => (
+      {(workouts) => (
       <Flex justify={"space-between"}>
         <Text alignContent={"center"}>
           {workouts.workoutTitle}

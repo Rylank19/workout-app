@@ -1,10 +1,9 @@
 import {create} from "zustand"
 import { useUserStore } from "./user";
-import { Exercise } from "./exercise";
 // this file essentially connects to our backend methods to manipulate data on the server
 
 export interface Workout {
-    _id?: string;
+    _id: string;
     name: string;
     exercises: {
         exerciseId: string,

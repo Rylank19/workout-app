@@ -3,7 +3,7 @@ import {useWorkoutStore, Workout} from '@/store/workout.ts'
 import WorkoutCard from "@/components/workouts/WorkoutCard"
 import { useExerciseStore } from "@/store/exercise"
 import { useUserStore } from "@/store/user"
-import { useState, useEffect, useCallback } from "react"
+import { useEffect } from "react"
 import {dialog} from "@/components/workouts/WorkoutDialog.tsx"
 import WorkoutDialogStepContent from "@/components/workouts/WorkoutDialogStepContent"
 
@@ -30,12 +30,12 @@ const defaultWorkouts : Workout[] = [
 const WorkoutPage = () => {
   const {fetchExercises, exercises} = useExerciseStore();
   const {userID} = useUserStore();
-  const {fetchWorkouts, createWorkout, workouts} = useWorkoutStore();
+  const {fetchWorkouts} = useWorkoutStore();
 
-  const [newWorkout, setNewWorkout] = useState<Workout>({
-    name: "",
-    exercises: [],
-  }); // some state for saving what users type in the form
+  // const [newWorkout, setNewWorkout] = useState<Workout>({
+  //   name: "",
+  //   exercises: [],
+  // }); // some state for saving what users type in the form
 
   useEffect(() => {
     fetchExercises(userID);
@@ -45,7 +45,7 @@ const WorkoutPage = () => {
 
   const handleOpenChange = () => {
     dialog.close("c")
-    createWorkout(newWorkout);
+    // createWorkout(newWorkout);
   }
 
   return (
@@ -53,7 +53,7 @@ const WorkoutPage = () => {
       <Flex direction={"column"} justify={"space-between"}>
         <VStack>
           {defaultWorkouts.map(workout => {
-            return <WorkoutCard key={workout._id} workout={workout} setNewWorkout={setNewWorkout} exercises={exercises} />
+            return <WorkoutCard key={workout._id} workout={workout} exercises={exercises} />
           })}
         </VStack>
       </Flex>
@@ -64,9 +64,7 @@ const WorkoutPage = () => {
           dialog.open("c", {
             title: "Workout Creation",
             content: () => (<WorkoutDialogStepContent
-            exercises={exercises}
-            workout={newWorkout}
-            setNewWorkout={setNewWorkout}/>),
+            exercises={exercises}/>),
             handleOpenChange: handleOpenChange
           })
           }}>Create New Workout</Button>

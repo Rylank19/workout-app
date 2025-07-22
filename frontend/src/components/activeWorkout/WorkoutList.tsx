@@ -1,7 +1,6 @@
 import { Workout } from '@/store/workout'
 import { Container, VStack, HStack, Text, For, CheckboxCard, Heading, Flex, Center, CloseButton, Box, Button, ActionBar, Portal } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
-import { RxCross2 } from "react-icons/rx";
 import { FaLayerGroup } from "react-icons/fa";
 import { Exercise } from '@/store/exercise';
 
