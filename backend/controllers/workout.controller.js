@@ -72,9 +72,9 @@ export const createWorkout = async (req, res) => {
 };
 
 export const deleteWorkout = async (req, res) => {
-    const {userID, id} = req.params;
+    const {userID, workoutId} = req.params;
     
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(workoutId)) {
         return res.status(404).json({success: false, message: "Invalid Exercise Id"});
     }
 
@@ -83,8 +83,8 @@ export const deleteWorkout = async (req, res) => {
     }
 
     try {
-        await User.findByIdAndUpdate(userID, { $pull: {workouts: {_id: id} } }); // ask MongoDB to find an item in product collection and delete
-        res.status(200).json({success: true, message: `Workout of id: ${id} deleted`});
+        await User.findByIdAndUpdate(userID, { $pull: {workouts: {_id: workoutId} } }); // ask MongoDB to find an item in product collection and delete
+        res.status(200).json({success: true, message: `Workout of id: ${workoutId} deleted`});
     } catch (error) {
         console.log("error in deleting workout");
         res.status(500).json({success: false, message: "Server Error"});

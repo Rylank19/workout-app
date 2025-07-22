@@ -4,6 +4,7 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { Toaster, toaster } from '@/components/ui/toaster';
 import { Exercise, useExerciseStore } from '@/store/exercise.ts';
 import { useUserStore } from '@/store/user.ts';
+import ExerciseDialogButton from './ExerciseDialogButton.tsx';
 
 
 const ExerciseCard = ({exercise} : {exercise : Exercise}) => {
@@ -31,7 +32,7 @@ const ExerciseCard = ({exercise} : {exercise : Exercise}) => {
         }
     })
     }
-}
+  }
 
   return (
     <Card.Root variant={'subtle'} w="md" overflow={"hidden"} key={exercise._id}>
@@ -44,8 +45,17 @@ const ExerciseCard = ({exercise} : {exercise : Exercise}) => {
         </Card.Description>
       </Card.Body>
       <Card.Footer justifyContent={"flex-end"}>
-        <IconButton colorPalette={"blue"}><FaEdit /></IconButton>
-        <IconButton colorPalette={"red"} onClick={() => handleDeleteExercise(userID, exercise._id)}><AiTwotoneDelete /></IconButton>
+        <ExerciseDialogButton
+          color={"blue"}
+          pageButton={
+            <IconButton colorPalette={"blue"}><FaEdit /></IconButton>
+          }
+          dialogButtonTitle={"Update Exercise"}
+          dialogTitle={"Change Exercise Fields"}
+          add={false}
+          exercise={exercise ?? {}}
+        />
+        <IconButton colorPalette={"red"} onClick={() => handleDeleteExercise(userID, exercise._id ?? "")}><AiTwotoneDelete /></IconButton>
       </Card.Footer>
     </Card.Root>
   )
