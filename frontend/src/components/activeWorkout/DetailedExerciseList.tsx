@@ -5,24 +5,36 @@ import { FaLayerGroup } from 'react-icons/fa6'
 import { Workout } from '@/store/workout'
 import { Exercise } from '@/store/exercise'
 import ExercisesPage from '@/pages/ExercisesPage'
+import { identity } from '@fullcalendar/core/internal.js'
+
+interface Set {
+  reps: number,
+  weight: number,
+}
 
 interface WorkoutExerciseData {
   exerciseId: string,
-  set_data: {
-      reps: number,
-      weight: number,
-  }[]
+  set_data: Set[]
+}
+
+interface SpotInWorkout {
+  exerciseIndex : number,
+  setIndex: number
 }
 
 const DetailedExerciseList = ({exercises, workout, handleClick} : {exercises : Exercise[], workout : Workout | undefined, handleClick : () => void}) => {
-  const [currentExercise, setCurrentExercise] = useState(0)
-  const [workoutSets, setWorkoutSets] = useState<WorkoutExerciseData[]>()
-
-  if (workout === undefined) return <Text>No workout loaded...</Text>
-
   const exerciseIds = workout.exercises.map(exercise => exercise.exerciseId)
   const exerciseNames = exercises.filter(exercise => exerciseIds.includes(exercise._id)).map(exercise => exercise.name)
 
+  const startingExercises = workout?.exercises.map(ex => ({exerciseId : ex.exerciseId, set_data : ex.set_data}));
+
+  const [currentExercise, setCurrentExercise] = useState(0)
+  const [currentSets, setCurrentSets] = useState(Array(exerciseNames.length).fill(0));
+
+
+  const [workoutSets, setWorkoutSets] = useState<WorkoutExerciseData[]>(startingExercises);
+
+  const sets = workoutSets.find((exercise) => exercise.exerciseId === exerciseIds[currentExercise])
 
   const completeWorkout = () => {
     toaster.create({
@@ -46,12 +58,70 @@ const DetailedExerciseList = ({exercises, workout, handleClick} : {exercises : E
   }
 
   const logExercise = () => {
-    if (moveForward())
-      toaster.create({
-        description: "Set Completed",
-        type: "success"
+    setCurrentSets(prevSets => {
+      const updatedSets = prevSets.map((set, index) => {
+        if (index === currentExercise)
+          return set+1;
+        else
+          return set;
       })
+      return updatedSets;
+    })
+    moveForward();
+    toaster.create({
+      description: "Set Completed",
+      type: "success"
+    })
   }
+
+  // this function takes a given set number and identifier and adds it to current workout
+  const handleChange = (type : string, value : number, setNumber : number) => {
+    console.log("Running")
+
+    const exerciseId = exerciseIds[currentExercise];
+    setWorkoutSets(prevWorkout => {
+      const updatedSets = prevWorkout.map((entry) => {
+        if (entry.exerciseId === exerciseId) { // changing the exercise that has a new set value
+          const updatedSetData = entry.set_data.map((singleSet, index) => {
+            if (index === setNumber) {
+              if (type === "reps")
+                return {reps: value, weight: singleSet.weight}
+              else if (type === "weight")
+                return {reps: singleSet.reps, weight: value}
+              else
+                return singleSet;
+            } else
+              return singleSet;
+          })
+          return ({exerciseId : entry.exerciseId, set_data: updatedSetData})
+        }
+        else return entry;
+      });
+      return updatedSets;
+    })
+  }
+
+  const variant = (logged) => {
+    if (logged) {
+      return {
+        border:"green",
+        borderStyle:"solid",
+        borderWidth:"2px",
+        buttonColorUp:"",
+        buttonColorDown:"",
+      }
+    }
+
+    return {
+      border:"",
+      borderStyle:"",
+      borderWidth:"1px",
+      buttonColorUp:"gray.700",
+      buttonColorDown:"gray.700",
+    }
+  }
+
+  if (workout === undefined) return <Text>No workout loaded...</Text>
 
   return (
     <>
@@ -67,8 +137,9 @@ const DetailedExerciseList = ({exercises, workout, handleClick} : {exercises : E
                 <Button variant="solid" colorPalette={"green"} marginBottom={"4"} onClick={completeWorkout}>Finish</Button>
               </Flex>
               <VStack>
-                <For each={["Set1", "Set2", "Set3"]}>
-                  {(item) => (<SingleExercise name={item} />)}
+                
+                <For each={sets?.set_data}>
+                  {(item, index) => (<SingleSet value={item} setNumber={index} currentSet={currentSets[currentExercise]} handleChange={handleChange} variant={variant}/>)}
                 </For>
               </VStack>
             </Container>
@@ -87,15 +158,25 @@ const DetailedExerciseList = ({exercises, workout, handleClick} : {exercises : E
 
 }
 
-const SingleExercise = ({name} : {name : string}) => {
+const SingleSet = ({value, setNumber, currentSet, handleChange, variant} : {value : Set, setNumber : number, currentSet : number, handleChange: (type: string, value: number, setNumber: number) => void
+  variant: (logged: boolean) => {
+    border: string;
+    borderStyle: string;
+    borderWidth: string;
+    buttonColorUp: string;
+    buttonColorDown: string;
+}
+}) => {
+  const variantOptions = variant(setNumber < currentSet)
+
   return (
     <>
-      <Card.Root>
+      <Card.Root border={variantOptions.border} borderStyle={variantOptions.borderStyle} borderWidth={variantOptions.borderWidth}>
         <Card.Body>
           <Flex gap={"4"}>
             <HStack flexGrow={1} gapX={"10"}>
               <Text fontSize={"md"}>Reps</Text>
-              <NumberInput.Root size={"md"}>
+              <NumberInput.Root size={"md"} value={value.reps.toString()} onValueChange={(value) => handleChange("reps", value.valueAsNumber || 0, setNumber)} >
                 <NumberInput.Control />
                 <NumberInput.Input />
               </NumberInput.Root>
@@ -103,7 +184,7 @@ const SingleExercise = ({name} : {name : string}) => {
             <Separator orientation={"vertical"} />
             <HStack flexGrow={1} gap={"10"}>
               <Text fontSize={"md"}>Weight</Text>
-              <NumberInput.Root size={"md"}>
+              <NumberInput.Root size={"md"} value={value.weight.toString()} onValueChange={(value) => handleChange("weight", value.valueAsNumber || 0, setNumber)}>
                 <NumberInput.Control />
                 <NumberInput.Input />
               </NumberInput.Root>
