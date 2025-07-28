@@ -5,10 +5,9 @@ import { AiTwotoneDelete } from 'react-icons/ai';
 import { Exercise } from '@/store/exercise.ts';
 import { dialog } from '@/components/workouts/WorkoutDialog.tsx'
 import WorkoutDialogStepContent from './WorkoutDialogStepContent.tsx';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
 const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exercise[]}) => {
-  const updateWorkout = useWorkoutStore(state => state.updateWorkout);
   const deleteWorkout = useWorkoutStore(state => state.deleteWorkout);
   const handleDeleteWorkout = async (wid : string) => {
     const {success, message} = await deleteWorkout(wid);
