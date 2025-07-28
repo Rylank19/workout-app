@@ -1,34 +1,15 @@
 import { Button, Container, Flex, VStack, Float } from "@chakra-ui/react"
-import {useWorkoutStore, Workout} from '@/store/workout.ts'
+import {useWorkoutStore} from '@/store/workout.ts'
 import WorkoutCard from "@/components/workouts/WorkoutCard"
 import { useExerciseStore } from "@/store/exercise"
 import { useUserStore } from "@/store/user"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect } from "react"
 import {dialog} from "@/components/workouts/WorkoutDialog.tsx"
 import WorkoutDialogStepContent from "@/components/workouts/WorkoutDialogStepContent"
 
 // TODO: Make sure workout and newWorkout are synched and createWorkout is working
 
-const defaultWorkouts : Workout[] = [
-  {
-    _id: "123",
-    name: "Squat Day",
-    exercises: [{
-        exerciseId: "681512c13253fc4402ba260e",
-        set_data: []
-    }]},
-  {
-    _id: "456",
-    name: "Deadlift Day",
-    exercises: [{
-        exerciseId: "6814f3b78da85a4ddf28312e",
-        set_data: []
-    }]
-  }
-]
-
 const WorkoutPage = () => {
-  const createWorkout = useWorkoutStore(state => state.createWorkout);
   const fetchExercises = useExerciseStore(state => state.fetchExercises);
   const exercises = useExerciseStore(state => state.exercises);
   const fetchWorkouts = useWorkoutStore(state => state.fetchWorkouts);
