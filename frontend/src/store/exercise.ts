@@ -51,12 +51,11 @@ export const useExerciseStore = create<MyState>((set) => ({
         set({ exercises: data.data});
     },
     deleteExercise: async (uid, eid) => {
-        const res = await fetch(`/api/user/:uid/exercises/${eid}`, {
+        const res = await fetch(`/api/user/${uid}/exercises/${eid}`, {
             method: "DELETE",
             headers:{
                 "Content-Type":"application/json"
             },
-            body:JSON.stringify({ID: uid})
         });
         const data = await res.json();
         if (!data.success) return { success: false, message: data.message};

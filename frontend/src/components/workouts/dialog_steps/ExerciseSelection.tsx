@@ -1,7 +1,7 @@
 import MiniExerciseCard from '@/components/exercises/ExerciseMiniCard';
 import { Exercise } from '@/store/exercise';
 import { Workout } from '@/store/workout';
-import { CheckboxGroup, SimpleGrid } from '@chakra-ui/react';
+import { CheckboxGroup, SimpleGrid, Field, Input } from '@chakra-ui/react';
 import React from 'react';
 
 interface NumberEntries {
@@ -78,17 +78,20 @@ const ExerciseSelection : React.FC<ExerciseSelectionProps> = ({exercises, exerci
   }
 
   return (
-    <CheckboxGroup value={exerciseNumbering.map(e => e.id)} onValueChange={handleValueChange}>
-      <SimpleGrid gap={4}>
-        {exercises.map( exercise => (
-          <MiniExerciseCard
-            key={exercise._id}
-            exercise={exercise}
-            number={exerciseNumbering.find(e => e.id === exercise._id)?.value ?? -1}
-          />
-        ))}
-      </SimpleGrid>
-    </CheckboxGroup>
+    <>
+      <Input variant={"flushed"} marginBottom={"4"} colorPalette={"green"} placeholder="New Workout" />
+      <CheckboxGroup value={exerciseNumbering.map(e => e.id)} onValueChange={handleValueChange}>
+        <SimpleGrid gap={4}>
+          {exercises.map( exercise => (
+            <MiniExerciseCard
+              key={exercise._id}
+              exercise={exercise}
+              number={exerciseNumbering.find(e => e.id === exercise._id)?.value ?? -1}
+            />
+          ))}
+        </SimpleGrid>
+      </CheckboxGroup>
+    </>
   )
 }
 

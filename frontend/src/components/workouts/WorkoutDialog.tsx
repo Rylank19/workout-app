@@ -3,7 +3,7 @@ import { JSX } from "react"
 
 export interface DialogProps {
   title?: string
-  content: () => JSX.Element
+  content: JSX.Element
   handleOpenChange?: () => void
 }
 
@@ -20,7 +20,7 @@ export const dialog = createOverlay<DialogProps>((props) => {
           <Dialog.Header>
             <Dialog.Title>{title}</Dialog.Title>
           </Dialog.Header>
-          {content()}
+          {content}
         </Dialog.Content>
       </Dialog.Positioner>
     </Portal>

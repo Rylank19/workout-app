@@ -12,7 +12,8 @@ const WorkoutDialogStepContent = ({ exercises }: {
   exercises: Exercise[];
 }) => {
   const [step, setStep] = useState(0)
-  const {createWorkout} = useWorkoutStore();
+  // const {createWorkout} = useWorkoutStore();
+  const createWorkout = useWorkoutStore(state => state.createWorkout);
   const [workoutData, setWorkoutData] = useState<Workout>({
     name: "",
     _id: "",
@@ -59,6 +60,8 @@ const WorkoutDialogStepContent = ({ exercises }: {
     return startingStates;
   });
   
+
+  console.log("Step Content Rendered")
   return (
     <>
       <Dialog.Body>

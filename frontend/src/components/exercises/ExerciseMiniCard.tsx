@@ -1,8 +1,9 @@
 import { Center, CheckboxCard, Text } from '@chakra-ui/react'
 import { Exercise } from '@/store/exercise.ts';
+import React from 'react';
 
 
-const MiniExerciseCard = ({exercise, number} : {exercise : Exercise, number: number}) => {
+const MiniExerciseCard = React.memo(({exercise, number} : {exercise : Exercise, number: number}) => {
   console.log("Render", exercise._id, number);
   return (
     <CheckboxCard.Root variant={'outline'} key={exercise._id} value={exercise._id} colorPalette={"teal"}>
@@ -20,6 +21,6 @@ const MiniExerciseCard = ({exercise, number} : {exercise : Exercise, number: num
       </CheckboxCard.Control>
     </CheckboxCard.Root>
   )
-}
+});
 
 export default MiniExerciseCard

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box } from '@chakra-ui/react'
 import NavBar from './components/NavBar';
 import {Navigate, Route, Routes} from 'react-router-dom';
@@ -9,7 +8,7 @@ import CalendarPage from './pages/CalendarPage';
 import BackgroundImage from '@/assets/Contour Line.svg'
 // import ActiveWorkout from './pages/ActiveWorkout';
 import { useState } from 'react';
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   const [showNav] = useState(true); // Placeholder for show state, replace with actual state management

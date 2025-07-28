@@ -26,7 +26,7 @@ interface MyState {
     createWorkout: (newExercise: Workout) => Promise<Response>,
     fetchWorkouts: (uid: string) => Promise<void>,
     fetchWorkout: (uid: string, workoutId: string) => Promise<void>,
-    // deleteExercise: (uid: string, eid: string) => Promise<Response>,
+    deleteWorkout: (wid: string) => Promise<Response>,
     // updateExercise: (updatedExercise : Exercise, eid: string) => Promise<Response>
 }
 
@@ -63,5 +63,20 @@ export const useWorkoutStore = create<MyState>((set) => ({
         const data = await res.json();
         set((state) => ({workouts:[...state.workouts, data.data]})); // updates exercises with the new product + all the old ones
         return {success: true, message: "Exercise created successfully"};
+    },
+    deleteWorkout: async (wid) => {
+        const uid = useUserStore.getState().userID
+        const res = await fetch(`/api/user/${uid}/workouts/${wid}`, {
+            method: "DELETE",
+            headers:{
+                "Content-Type":"application/json"
+            },
+        });
+        const data = await res.json();
+        if (!data.success) return { success: false, message: data.message};
+
+        // this line updates the ui immediately. If not here then a refresh is needed to see changes
+        set((state) => ({workouts: state.workouts.filter(workout => workout._id !== wid)}));
+        return { success: true, message: data.message};
     },
 })) // this is a callback ( the brackets mean we are returning an object)

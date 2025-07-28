@@ -1,20 +1,19 @@
 import { useWorkoutStore, Workout } from '@/store/workout.ts'
-import { useUserStore } from '@/store/user.ts';
 import { Toaster, toaster } from '../ui/toaster.tsx';
 import { Card, IconButton, Image, Link, LinkOverlay } from '@chakra-ui/react';
 import { AiTwotoneDelete } from 'react-icons/ai';
 import { Exercise } from '@/store/exercise.ts';
 import { dialog } from '@/components/workouts/WorkoutDialog.tsx'
 import WorkoutDialogStepContent from './WorkoutDialogStepContent.tsx';
+import { useCallback } from 'react';
 
 const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exercise[]}) => {
-  const {createWorkout} = useWorkoutStore();
-  const {userID} = useUserStore();
-  const handleDeleteWorkout = async (uid: string, wid : string) => {
-    // const {success, message} = await deleteWorkout(uid, eid);
-    console.log(uid, wid);
-    const success = true;
-    const message = "Hello"
+  // const {createWorkout, deleteWorkout} = useWorkoutStore();
+  const createWorkout = useWorkoutStore(state => state.createWorkout);
+  const deleteWorkout = useWorkoutStore(state => state.deleteWorkout);
+  const handleDeleteWorkout = async (wid : string) => {
+    const {success, message} = await deleteWorkout(wid);
+    console.log(wid);
     if (!success) {
       toaster.create({
           title:`Error: ${message}`,
@@ -37,6 +36,19 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
     }
   }
 
+  const handleOpenChange = useCallback(async () => {
+    dialog.close("a");
+
+    // Let dialog unmount and page settle before saving
+    setTimeout(() => {
+      createWorkout(workout).then((result) => {
+        if (!result.success) {
+          console.error(result.message);
+        }
+      });
+    }, 0);  // Runs after dialog unmounts
+  }, [createWorkout, workout]);
+
   return (
     <Card.Root variant={'elevated'} overflow={"hidden"} key={workout._id} flexDirection={"row"} width={"2xl"}>
       <Toaster />
@@ -52,17 +64,14 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
           console.log("Opening")
           dialog.open("a", {
             title: "Workout Creation",
-            content: () => (<WorkoutDialogStepContent 
-            exercises={exercises}/>),
-            handleOpenChange: () => {
-              createWorkout(workout)
-              dialog.close("a");
-            }})}}
+            content: <WorkoutDialogStepContent 
+            exercises={exercises}/>,
+            handleOpenChange: handleOpenChange
+          })}}
       ></Link>
       </LinkOverlay>
-      <dialog.Viewport />
       <Card.Footer>
-        <IconButton colorPalette={"red"} onClick={() => handleDeleteWorkout(userID, workout._id)}><AiTwotoneDelete /></IconButton>
+        <IconButton colorPalette={"red"} onClick={() => handleDeleteWorkout(workout._id)}><AiTwotoneDelete /></IconButton>
       </Card.Footer>
     </Card.Root>
   )
