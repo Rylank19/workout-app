@@ -16,11 +16,10 @@ const ExercisesPage = () => {
   console.log("exercises", exercises)
 
   return (
-    <Container h={"85vh"} position={"relative"}>
+    <Container gap={"4"} h={"85vh"} position={"relative"}>
       <Toaster/>
-      {/* <Flex direction="column" justify={"space-between"} height={"85vh"}> */}
         {exercises.length === 0 && (<Text>Nothing to see here...</Text>)}
-        <Flex h={"85vh"} gap={4} flexWrap={'wrap'} overflow={"scroll"} scrollbar={"hidden"}>
+        <Flex h={"full"} gap={4} flexWrap={'wrap'} overflow={"scroll"} scrollbar={"hidden"}>
           {exercises.map((exercise) => {
             return <ExerciseCard key={exercise._id} exercise={exercise} />
           })}
@@ -36,7 +35,6 @@ const ExercisesPage = () => {
           dialogTitle={"Exercise Creation"}
           add={true}
         />
-      {/* </Flex> */}
     </Container>
   )
 }

@@ -3,7 +3,7 @@ import {useWorkoutStore, Workout} from '@/store/workout.ts'
 import WorkoutCard from "@/components/workouts/WorkoutCard"
 import { useExerciseStore } from "@/store/exercise"
 import { useUserStore } from "@/store/user"
-import { useEffect } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {dialog} from "@/components/workouts/WorkoutDialog.tsx"
 import WorkoutDialogStepContent from "@/components/workouts/WorkoutDialogStepContent"
 
@@ -28,14 +28,12 @@ const defaultWorkouts : Workout[] = [
 ]
 
 const WorkoutPage = () => {
-  const {fetchExercises, exercises} = useExerciseStore();
-  const {userID} = useUserStore();
-  const {fetchWorkouts} = useWorkoutStore();
-
-  // const [newWorkout, setNewWorkout] = useState<Workout>({
-  //   name: "",
-  //   exercises: [],
-  // }); // some state for saving what users type in the form
+  const createWorkout = useWorkoutStore(state => state.createWorkout);
+  const fetchExercises = useExerciseStore(state => state.fetchExercises);
+  const exercises = useExerciseStore(state => state.exercises);
+  const fetchWorkouts = useWorkoutStore(state => state.fetchWorkouts);
+  const workouts = useWorkoutStore(state => state.workouts);
+  const userID = useUserStore(state => state.userID);
 
   useEffect(() => {
     fetchExercises(userID);
@@ -43,16 +41,16 @@ const WorkoutPage = () => {
   }, [fetchExercises, fetchWorkouts, userID])
   console.log("exercises", exercises)
 
-  const handleOpenChange = () => {
-    dialog.close("c")
-    // createWorkout(newWorkout);
-  }
+  const handleOpenChange = useCallback(async () => {
+    dialog.close("c");
+  }, [])
 
+  console.log("Page rendered")
   return (
-    <Container gap={4} position={"relative"} h={"85vh"}>
-      <Flex direction={"column"} justify={"space-between"}>
+    <Container position={"relative"} h={"85vh"}>
+      <Flex h={"full"} direction={"column"} justify={"space-between"} overflow={"scroll"} scrollbar={"hidden"}>
         <VStack>
-          {defaultWorkouts.map(workout => {
+          {workouts.map(workout => {
             return <WorkoutCard key={workout._id} workout={workout} exercises={exercises} />
           })}
         </VStack>
@@ -63,12 +61,13 @@ const WorkoutPage = () => {
         onClick={() => {
           dialog.open("c", {
             title: "Workout Creation",
-            content: () => (<WorkoutDialogStepContent
-            exercises={exercises}/>),
+            content: <WorkoutDialogStepContent
+            exercises={exercises}/>,
             handleOpenChange: handleOpenChange
           })
           }}>Create New Workout</Button>
       </Float>
+      <dialog.Viewport />
     </Container>
   )
 }

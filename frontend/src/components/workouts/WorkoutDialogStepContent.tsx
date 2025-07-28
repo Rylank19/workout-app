@@ -3,17 +3,18 @@ import { Workout } from '@/store/workout';
 import { Button, Center, CloseButton, Dialog, Steps} from '@chakra-ui/react';
 import { useEffect, useState } from 'react'
 import { useWorkoutStore } from '@/store/workout';
-import { dialog } from './WorkoutDialog';
 import ExerciseSelection from './dialog_steps/ExerciseSelection';
 import SelectRepsAndOrder from './dialog_steps/SelectRepsAndOrder';
 import ReviewWorkout from './dialog_steps/ReviewWorkout';
 
-const WorkoutDialogStepContent = ({ exercises }: {
+const WorkoutDialogStepContent = ({ exercises, workout }: {
   exercises: Exercise[];
+  workout?: Workout;
 }) => {
   const [step, setStep] = useState(0)
-  const {createWorkout} = useWorkoutStore();
-  const [workoutData, setWorkoutData] = useState<Workout>({
+  const createWorkout = useWorkoutStore(state => state.createWorkout);
+  const updateWorkout = useWorkoutStore(state => state.updateWorkout);
+  const [workoutData, setWorkoutData] = useState<Workout>(workout ?? {
     name: "",
     _id: "",
     exercises: [],
@@ -33,10 +34,14 @@ const WorkoutDialogStepContent = ({ exercises }: {
       setStep(step - 1)
   }
   
-  const storeAndReset = () => {
+  const storeAndReset = async () => {
     console.log("Storing and resetting workout data:", workoutData);
-    createWorkout(workoutData);
-    dialog.close("a")
+    let result;
+    if (workout === undefined)
+      result = await createWorkout(workoutData);
+    else
+      result = await updateWorkout(workoutData);
+    console.log(result);
   }
 
   useEffect(() => {
@@ -59,6 +64,8 @@ const WorkoutDialogStepContent = ({ exercises }: {
     return startingStates;
   });
   
+
+  console.log("Step Content Rendered")
   return (
     <>
       <Dialog.Body>

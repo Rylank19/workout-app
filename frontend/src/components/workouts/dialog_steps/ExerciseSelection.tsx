@@ -1,7 +1,7 @@
 import MiniExerciseCard from '@/components/exercises/ExerciseMiniCard';
 import { Exercise } from '@/store/exercise';
 import { Workout } from '@/store/workout';
-import { CheckboxGroup, SimpleGrid } from '@chakra-ui/react';
+import { CheckboxGroup, SimpleGrid, Field, Input } from '@chakra-ui/react';
 import React from 'react';
 
 interface NumberEntries {
@@ -19,7 +19,8 @@ interface ExerciseSelectionProps {
 
 const ExerciseSelection : React.FC<ExerciseSelectionProps> = ({exercises, exerciseNumbering, setExerciseNumbering, workoutData, setWorkoutData}) => {
   const handleValueChange = (selected: string[]) => {
-    const currentSet = new Set(selected);      
+    const currentSet = new Set(selected);
+    console.log(currentSet) 
 
     if (selected.length < exerciseNumbering.length) {// element was removed
       const difference_array = exerciseNumbering.filter(x => !selected.includes(x.id)); // get the element that is different
@@ -61,34 +62,41 @@ const ExerciseSelection : React.FC<ExerciseSelectionProps> = ({exercises, exerci
       
       const newExercises = []
       for (let i = 0; i < exercises.length; i++) {
-        if (!workoutData.exercises.find(e => e.exerciseId === exercises[i].exerciseId))
-          newExercises.push(exercises[i])
+        const cur_exercise = workoutData.exercises.find(e => e.exerciseId === exercises[i].exerciseId)
+        if (cur_exercise !== undefined)
+          newExercises.push(cur_exercise)
       }
       
-      console.log("New Exercises")
+      console.log("All Exercises")
       console.log(newExercises)
       return {
         ...prev,
         exercises: [
-          ...prev.exercises,
           ...newExercises
         ]
       }
     })
   }
 
+  const updateNameChange = (name : string) => {
+    setWorkoutData({...workoutData, name})
+  }
+
   return (
-    <CheckboxGroup value={exerciseNumbering.map(e => e.id)} onValueChange={handleValueChange}>
-      <SimpleGrid gap={4}>
-        {exercises.map( exercise => (
-          <MiniExerciseCard
-            key={exercise._id}
-            exercise={exercise}
-            number={exerciseNumbering.find(e => e.id === exercise._id)?.value ?? -1}
-          />
-        ))}
-      </SimpleGrid>
-    </CheckboxGroup>
+    <>
+      <Input variant={"flushed"} marginBottom={"4"} colorPalette={"green"} placeholder="New Workout" value={workoutData.name} onChange={(e) => updateNameChange(e.target.value)} />
+      <CheckboxGroup value={exerciseNumbering.map(e => e.id)} onValueChange={handleValueChange}>
+        <SimpleGrid gap={4}>
+          {exercises.map( exercise => (
+            <MiniExerciseCard
+              key={exercise._id}
+              exercise={exercise}
+              number={exerciseNumbering.find(e => e.id === exercise._id)?.value ?? -1}
+            />
+          ))}
+        </SimpleGrid>
+      </CheckboxGroup>
+    </>
   )
 }
 

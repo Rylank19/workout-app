@@ -90,3 +90,42 @@ export const deleteWorkout = async (req, res) => {
         res.status(500).json({success: false, message: "Server Error"});
     }
 };
+
+export const updateWorkout = async (req, res) => {
+    console.log("Made it into updateWorkout controller")
+    const { userID, workoutId } = req.params;
+
+    const workout = req.body;
+
+    console.log(workoutId);
+
+    if (!mongoose.Types.ObjectId.isValid(workoutId)) {
+        console.log("Hello")
+        return res.status(404).json({success: false, message: "Invalid Exercise Id"});
+    }
+
+    console.log("Checking sent object")
+    console.log(workout.name, workout.exercises)
+
+    try {
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: userID, 'workouts._id': workoutId},
+            {
+                $set: {
+                    'workouts.$.name' : workout.name,
+                    'workouts.$.exercises': workout.exercises
+                }
+            },
+            { new: true}
+        );
+    
+        console.log("Working")
+
+        const updatedWorkout = updatedUser?.workouts.find(
+            (workout) => workout._id.toString() === workoutId
+        );
+        res.status(200).json({ success: true, data: updatedWorkout});
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error"});
+    }
+}
