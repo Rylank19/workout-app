@@ -27,7 +27,7 @@ interface MyState {
     fetchWorkouts: (uid: string) => Promise<void>,
     fetchWorkout: (uid: string, workoutId: string) => Promise<void>,
     deleteWorkout: (wid: string) => Promise<Response>,
-    // updateExercise: (updatedExercise : Exercise, eid: string) => Promise<Response>
+    updateWorkout: (updatedWorkout : Workout) => Promise<Response>
 }
 
 export const useWorkoutStore = create<MyState>((set) => ({
@@ -49,6 +49,7 @@ export const useWorkoutStore = create<MyState>((set) => ({
         return data.data; // returns the workout data
     },
     createWorkout: async (newWorkout) => {
+        console.log("Made it to createWorkout")
         if (!newWorkout.name || !newWorkout.exercises || newWorkout.exercises.length == 0) {
             return {success:false, message:"Please fill in all fields."}
         }
@@ -79,4 +80,20 @@ export const useWorkoutStore = create<MyState>((set) => ({
         set((state) => ({workouts: state.workouts.filter(workout => workout._id !== wid)}));
         return { success: true, message: data.message};
     },
+    updateWorkout: async (updatedWorkout) => {
+        console.log("Made it to update")
+        console.log("Checking attached object: ", updatedWorkout)
+        const uid = useUserStore.getState().userID;
+        const res = await fetch(`/api/user/${uid}/workouts/${updatedWorkout._id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(updatedWorkout)
+        });
+        const data = await res.json();
+        if(!data.success) return { success: false, message: data.message};
+        set((state) => ({workouts:state.workouts.map(workout => workout._id === updatedWorkout._id ? data.data : workout)}));
+        return {success: true, message: "Workout updated successfully"};
+    }
 })) // this is a callback ( the brackets mean we are returning an object)

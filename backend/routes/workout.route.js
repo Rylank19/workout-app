@@ -1,5 +1,5 @@
 import express from "express";
-import { createWorkout, deleteWorkout, getWorkouts, getWorkout } from "../controllers/workout.controller.js"
+import { createWorkout, deleteWorkout, getWorkouts, getWorkout, updateWorkout } from "../controllers/workout.controller.js"
 
 const router = express.Router({mergeParams: true});
 
@@ -12,5 +12,7 @@ router.delete("/:workoutId", deleteWorkout);
 router.get("/", getWorkouts)
 
 router.get("/:workoutId", getWorkout);
+
+router.put("/:workoutId", updateWorkout)
 
 export default router;

@@ -5,11 +5,10 @@ import { AiTwotoneDelete } from 'react-icons/ai';
 import { Exercise } from '@/store/exercise.ts';
 import { dialog } from '@/components/workouts/WorkoutDialog.tsx'
 import WorkoutDialogStepContent from './WorkoutDialogStepContent.tsx';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 
 const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exercise[]}) => {
-  // const {createWorkout, deleteWorkout} = useWorkoutStore();
-  const createWorkout = useWorkoutStore(state => state.createWorkout);
+  const updateWorkout = useWorkoutStore(state => state.updateWorkout);
   const deleteWorkout = useWorkoutStore(state => state.deleteWorkout);
   const handleDeleteWorkout = async (wid : string) => {
     const {success, message} = await deleteWorkout(wid);
@@ -38,16 +37,7 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
 
   const handleOpenChange = useCallback(async () => {
     dialog.close("a");
-
-    // Let dialog unmount and page settle before saving
-    setTimeout(() => {
-      createWorkout(workout).then((result) => {
-        if (!result.success) {
-          console.error(result.message);
-        }
-      });
-    }, 0);  // Runs after dialog unmounts
-  }, [createWorkout, workout]);
+  }, []);
 
   return (
     <Card.Root variant={'elevated'} overflow={"hidden"} key={workout._id} flexDirection={"row"} width={"2xl"}>
@@ -65,7 +55,8 @@ const WorkoutCard = ({workout, exercises} : {workout : Workout, exercises: Exerc
           dialog.open("a", {
             title: "Workout Creation",
             content: <WorkoutDialogStepContent 
-            exercises={exercises}/>,
+            exercises={exercises}
+            workout={workout}/>,
             handleOpenChange: handleOpenChange
           })}}
       ></Link>
